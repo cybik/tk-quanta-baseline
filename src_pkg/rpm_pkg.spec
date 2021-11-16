@@ -97,12 +97,13 @@ for POSTINST in /usr/lib/dkms/common.postinst /usr/share/%{module}/postinst; do
 
         rmmod tuxedo_io > /dev/null 2>&1 || true
         rmmod uniwill_wmi > /dev/null 2>&1 || true
+        rmmod quanta_wmi > /dev/null 2>&1 || true
         rmmod clevo_wmi > /dev/null 2>&1 || true
         rmmod clevo_acpi > /dev/null 2>&1 || true
         rmmod tuxedo_keyboard > /dev/null 2>&1 || true
         
         modprobe tuxedo_keyboard > /dev/null 2>&1 || true
-        modprobe uniwill_wmi > /dev/null 2>&1 || true
+        modprobe quanta_wmi > /dev/null 2>&1 || true
         modprobe clevo_wmi > /dev/null 2>&1 || true
         modprobe clevo_acpi > /dev/null 2>&1 || true
         modprobe tuxedo_io > /dev/null 2>&1 || true

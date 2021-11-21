@@ -41,6 +41,8 @@
 //static bool quanta_ec_direct = true;
 static bool quanta_ec_direct = false;
 
+#define HARD_DISABLE_WRITES 1
+
 DEFINE_MUTEX(quanta_ec_lock);
 
 static u32 qnt_wmi_ec_evaluate(u8 addr_low, u8 addr_high, u8 data_low, u8 data_high, u8 read_flag, u32 *return_buffer)
@@ -74,7 +76,7 @@ static u32 qnt_wmi_ec_evaluate(u8 addr_low, u8 addr_high, u8 data_low, u8 data_h
 		wmi_arg_bytes[5] = 0x01;
 	}
 	
-	status = wmi_evaluate_method(QUANTA_WMI_MGMT_GUID_BA, wmi_instance, wmi_method_id, &wmi_in, &wmi_out);
+	status = wmi_evaluate_method(QUANTA_WMI_MGMT_GUID_LED_WRITE, wmi_instance, wmi_method_id, &wmi_in, &wmi_out);
 	out_acpi = (union acpi_object *) wmi_out.pointer;
 
 	if (out_acpi && out_acpi->type == ACPI_TYPE_BUFFER) {
@@ -103,7 +105,7 @@ static u32 qnt_ec_read_addr_wmi(u8 addr_low, u8 addr_high, union qnt_ec_read_ret
 	u32 qnt_data[10];
 	u32 ret = qnt_wmi_ec_evaluate(addr_low, addr_high, 0x00, 0x00, 1, qnt_data);
 	output->dword = qnt_data[0];
-	// pr_debug("addr: 0x%02x%02x value: %0#4x (high: %0#4x) result: %d\n", addr_high, addr_low, output->bytes.data_low, output->bytes.data_high, ret);
+	pr_debug("addr: 0x%02x%02x value: %0#4x (high: %0#4x) result: %d\n", addr_high, addr_low, output->bytes.data_low, output->bytes.data_high, ret);
 	return ret;
 }
 
@@ -112,10 +114,14 @@ static u32 qnt_ec_read_addr_wmi(u8 addr_low, u8 addr_high, union qnt_ec_read_ret
  */
 static u32 qnt_ec_write_addr_wmi(u8 addr_low, u8 addr_high, u8 data_low, u8 data_high, union qnt_ec_write_return *output)
 {
+#if defined(HARD_DISABLE_WRITES)
+	return 0;
+#else
 	u32 qnt_data[10];
 	u32 ret = qnt_wmi_ec_evaluate(addr_low, addr_high, data_low, data_high, 0, qnt_data);
 	output->dword = qnt_data[0];
 	return ret;
+#endif
 }
 
 /**
@@ -166,6 +172,9 @@ static u32 qnt_ec_read_addr_direct(u8 addr_low, u8 addr_high, union qnt_ec_read_
 
 static u32 qnt_ec_write_addr_direct(u8 addr_low, u8 addr_high, u8 data_low, u8 data_high, union qnt_ec_write_return *output)
 {
+#if defined(HARD_DISABLE_WRITES)
+	return 0;
+#else
 	u32 result = 0;
 	u8 tmp, count, flags;
 
@@ -205,6 +214,7 @@ static u32 qnt_ec_write_addr_direct(u8 addr_low, u8 addr_high, u8 data_low, u8 d
 	mutex_unlock(&quanta_ec_lock);
 
 	return result;
+#endif
 }
 
 u32 qnt_wmi_read_ec_ram(u16 addr, u8 *data)
@@ -231,6 +241,9 @@ u32 qnt_wmi_read_ec_ram(u16 addr, u8 *data)
 
 u32 qnt_wmi_write_ec_ram(u16 addr, u8 data)
 {
+#if defined(HARD_DISABLE_WRITES)
+	return 0;
+#else
 	u32 result;
 	u8 addr_low, addr_high, data_low, data_high;
 	union qnt_ec_write_return output;
@@ -246,6 +259,7 @@ u32 qnt_wmi_write_ec_ram(u16 addr, u8 data)
 		result = qnt_ec_write_addr_wmi(addr_low, addr_high, data_low, data_high, &output);
 
 	return result;
+#endif
 }
 
 struct quanta_interface_t quanta_wmi_interface = {
@@ -264,8 +278,8 @@ static int quanta_wmi_probe(struct wmi_device *wdev, const void *dummy_context)
 
 	// Look for for GUIDs used on Quanta-based devices
 	status =
-		wmi_has_guid(QUANTA_WMI_EVENT_GUID_0) &&
-		wmi_has_guid(QUANTA_WMI_MGMT_GUID_BA);
+		wmi_has_guid(QUANTA_WMI_EVNT_GUID_MESG_MNTR) &&
+		wmi_has_guid(QUANTA_WMI_MGMT_GUID_LED_WRITE);
 	
 	if (!status) {
 		pr_debug("probe: At least one Quanta GUID missing\n"); // more than one?
@@ -274,7 +288,10 @@ static int quanta_wmi_probe(struct wmi_device *wdev, const void *dummy_context)
 
 	quanta_add_interface(&quanta_wmi_interface);
 
-	pr_info("interface initialized\n");
+	pr_info("probe: Generic Quanta interface initialized\n");
+
+#if 1
+#endif
 
 	return 0;
 }
@@ -294,29 +311,56 @@ static void quanta_wmi_remove(struct wmi_device *wdev)
 
 static void quanta_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 {
-	u32 code;
-
-	if (!IS_ERR_OR_NULL(quanta_wmi_interface.event_callb)) {
-		if (obj) {
-			if (obj->type == ACPI_TYPE_INTEGER) {
-				code = obj->integer.value;
-				// Execute registered callback
-				quanta_wmi_interface.event_callb(code);
-			} else {
-				pr_debug("unknown event type - %d (%0#6x)\n", obj->type, obj->type);
-			}
+	pr_info("notify: Generic Quanta interface has received a signal\n");
+	pr_info("notify:  Generic Quanta interface Notify Info:\n");
+	pr_info("notify:   objtype: %d (%0#6x)\n", obj->type, obj->type);
+	if (!obj) {
+		pr_debug("expected ACPI object doesn't exist\n");
+	} else if (obj->type == ACPI_TYPE_INTEGER) {
+		if (!IS_ERR_OR_NULL(quanta_wmi_interface.event_callb_int)) {
+			u32 code;
+			code = obj->integer.value;
+			// Execute registered callback
+			quanta_wmi_interface.event_callb_int(code);
 		} else {
-			pr_debug("expected ACPI object doesn't exist\n");
+			pr_debug("no registered callback\n");
+		}
+	} else if (obj->type == ACPI_TYPE_BUFFER) {
+		if (!IS_ERR_OR_NULL(quanta_wmi_interface.event_callb_buf)) {
+			// Execute registered callback
+			quanta_wmi_interface.event_callb_buf(obj->buffer.length, obj->buffer.pointer);
+		} else {
+			pr_debug("no registered callback\n");
 		}
 	} else {
-		pr_debug("no registered callback\n");
+		pr_debug("unknown event type - %d (%0#6x)\n", obj->type, obj->type);
+	}
+}
+
+void quanta_event_callb_buf(u8 buffer_len, u8* buffer_ptr)
+{
+	// THIS WATCHES OVER THE STATE?
+	//  Check on windows wtf this "creates" in the UI to replicate state watch in Linux.
+	//  Current: 0/1/2 based on keyboard backlight level. 0: off - 1: mid - 2: blastoff
+	pr_info("notify:   objlen : %d\n", buffer_len);
+	pr_info("notify:   objptr : %p\n", buffer_ptr);
+	uint8_t qnt_data[buffer_len];
+	memcpy(qnt_data, buffer_ptr, buffer_len);
+	int i;
+	for(i = 0; i < (buffer_len/8); i++) {
+		pr_info("notify:   objval : 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X\n",
+				qnt_data[(i*8)+0], qnt_data[(i*8)+1], qnt_data[(i*8)+2], qnt_data[(i*8)+3],
+				qnt_data[(i*8)+4], qnt_data[(i*8)+5], qnt_data[(i*8)+6], qnt_data[(i*8)+7]
+		);
 	}
 }
 
 static const struct wmi_device_id quanta_wmi_device_ids[] = {
 	// Listing one should be enough, for a driver that "takes care of all anyways"
-	// also prevents probe (and handling) per "device"
-	{ .guid_string = QUANTA_WMI_EVENT_GUID_0 },
+	//  also prevents probe (and handling) per "device"
+	// ...but list both anyway.
+	{ .guid_string = QUANTA_WMI_EVNT_GUID_MESG_MNTR },
+	{ .guid_string = QUANTA_WMI_MGMT_GUID_LED_WRITE },
 	{ }
 };
 

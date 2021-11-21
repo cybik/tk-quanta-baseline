@@ -1,10 +1,24 @@
-# Table of Content
+# Table of Contents
+- <a href="#notice">Notice</a>
 - <a href="#description">Description</a>
 - <a href="#building">Building and Install</a>
 - <a href="#using">Using</a>
 - <a href="#sysfs">Sysfs</a>
 - <a href="#kernelparam">Kernel Parameter</a>
 - <a href="#modes">Modes</a>
+
+# Notice
+This forked repository is highly experimental, highly verbose, and should not be considered
+official in any capacity.
+
+## What are you doing here? <a name="nani"></a>
+This repository fork uses upstream's clevo_wmi code as a jumping point to start poking at hooking
+into the Eluktronics Prometheus XVI's WMI interfaces to access and, ultimately, control the settings
+for the keyboard and fan LEDs.
+
+## Why tho <a name="doushite"></a>
+Literally the only thing that's "not working" on this laptop is LED controls. Everything else just
+worked out of the box after upgrading the laptop to 5.15. --@cybik
 
 # Description <a name="description"></a>
 TUXEDO Computers kernel module drivers for keyboard, keyboard backlight & general hardware I/O

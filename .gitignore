@@ -25,3 +25,4 @@ rpm
 deb/tuxedo-keyboard-*
 *.deb
 *.rpm
+package-lock.json

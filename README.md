@@ -23,23 +23,27 @@ worked out of the box after upgrading the laptop to 5.15. --@cybik
 # Description <a name="description"></a>
 TUXEDO Computers kernel module drivers for keyboard, keyboard backlight & general hardware I/O
 
-Features
+Features:
+
 - Driver for Fn-keys
 - Sysfs control of brightness/color/mode for most TUXEDO keyboards (note: white backlight only models are currently not supported)
 - Hardware I/O driver for TUXEDO Control Center
 
-Modules included in this package
+Modules included in this package:
+
 - tuxedo-keyboard
 - tuxedo-io
 - clevo-wmi
 - clevo-acpi
 
 Additional modules not related to Tuxedo products:
+
 - quanta-wmi
 
 # Building and Installing <a name="building"></a>
 
-## Dependencies:
+## Dependencies
+
 - make
 - gcc
 - linux-headers
@@ -74,6 +78,7 @@ make clean && make
 ### Add as DKMS Module(s)
 
 Install the Module:
+
 ```sh
 make clean
 
@@ -81,10 +86,13 @@ sudo make dkmsinstall
 ```
 
 Load the Module with modprobe:
+
 ```sh
 modprobe tuxedo_keyboard
 ```
+
 or
+
 ```sh
 sudo modprobe tuxedo_keyboard
 ```
@@ -94,6 +102,7 @@ You might also want to activate `tuxedo_io` module the same way if you are using
 ### Uninstalling DKMS module(s)
 
 Remove the DKMS module and source:
+
 ```sh
 sudo make dkmsremove
 
@@ -108,11 +117,12 @@ sudo rm /etc/modprobe.d/tuxedo_keyboard.conf
 modprobe tuxedo_keyboard
 ```
 
-## Load the Module on boot:
+## Load Module(s) on boot
 
 If a module is relevant it will be loaded automatically on boot. If it is not loaded after a reboot, it most likely means that it is not needed.
 
-Add Module to /etc/modules
+Add Module to /etc/modules:
+
 ```sh
 sudo su
 
@@ -129,14 +139,16 @@ In this example, we start the kernel module with the following settings:
 - green color for the center of keyboard 
 - blue color for the right side of keyboard 
 
-Note that we write it's settings to a `.conf` file under `/etc/modprobe.d` named `tuxedo_keyboard.conf`. 
+Note that we write it's settings to a `.conf` file under `/etc/modprobe.d` named `tuxedo_keyboard.conf`.
 
 ```sh
 sudo su
 
 echo "options tuxedo_keyboard mode=0 color_left=0xFF0000 color_center=0x00FF00 color_right=0x0000FF" > /etc/modprobe.d/tuxedo_keyboard.conf
 ```
+
 or
+
 ```sh
 sudo cp tuxedo_keyboard.conf /etc/modprobe.d/tuxedo_keyboard.conf
 ```
@@ -144,89 +156,115 @@ sudo cp tuxedo_keyboard.conf /etc/modprobe.d/tuxedo_keyboard.conf
 # Sysfs <a name="sysfs"></a>
 
 ## General
+
 Path: /sys/devices/platform/tuxedo_keyboard
 
 ## color_left
-Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)   
+
+Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)
 Description: Set the color of the left Keyboard Side
 
 ## color_center
-Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)   
+
+Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)
 Description: Set the color of the center of Keyboard
 
 ## color_right
-Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)   
+
+Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)
 Description: Set the color of the right Keyboard Side
 
 ## color_extra
-Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)   
+
+Allowed Values: Hex-Value (e.g. 0xFF0000 for the Color Red)
 Description: Set the color of the extra region (if exist) of the Keyboard
 
 ## brightness
-Allowed Values: 0 - 255   
+
+Allowed Values: 0 - 255
 Description: Set the brightness of the Keyboard
 
 ## mode
-Allowed Values: 0 - 7   
+
+Allowed Values: 0 - 7
 Description: Set the mode of the Keyboard. A list with the modes is under <a href="#modes">Modes</a>
 
 ## state
-Allowed Values: 0, 1   
+
+Allowed Values: 0, 1
 Description: Set the State of keyboard, 0 is keyboard is off and 1 is keyboard is on
 
 ## extra
-Allowed Values: 0, 1   
+
+Allowed Values: 0, 1
 Description: Only get the information, if the keyboard have the extra region
 
 # Kernel Parameter <a name="kernelparam"></a>
 
 ## Using
+
 ```sh
 sudo modprobe tuxedo_keyboard <params>
 ```
 
 ## color_left
+
 Set the color of the left Keyboard Side
 
 ## color_center
+
 Set the color of the left Keyboard Side
 
 ## color_right
+
 Set the color of the left Keyboard Side
 
 ## color_extra
+
 Set the color of the left Keyboard extra region (Only when is a supported keyboard)
 
 ## mode
+
 Set the mode (on/off) of keyboard
 
 ## brightness
+
 Set the brightness of keyboard
 
 ## state
 
+Sets the state?
+
 # Modes <a name="modes"></a>
 
 ## CUSTOM
+
 Value: 0
 
 ## BREATHE
+
 Value: 1
 
 ## CYCLE
+
 Value: 2
 
 ## DANCE
+
 Value: 3
 
 ## FLASH
+
 Value: 4
 
 ## RANDOM_COLOR
+
 Value: 5
 
 ## TEMPO
+
 Value: 6
 
 ## WAVE
+
 Value: 7

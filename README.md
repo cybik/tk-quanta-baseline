@@ -7,7 +7,7 @@
 - <a href="#kernelparam">Kernel Parameter</a>
 - <a href="#modes">Modes</a>
 
-# Notice
+# IMPORTANT - Forked Repository Notice <a name="notice"></a>
 This forked repository is highly experimental, highly verbose, and should not be considered
 official in any capacity.
 
@@ -34,7 +34,10 @@ Modules included in this package
 - clevo-wmi
 - clevo-acpi
 
-# Building and Install <a name="building"></a>
+Additional modules not related to Tuxedo products:
+- quanta-wmi
+
+# Building and Installing <a name="building"></a>
 
 ## Dependencies:
 - make
@@ -42,7 +45,7 @@ Modules included in this package
 - linux-headers
 - dkms (Only when using this module with DKMS functionality)
 
-## Warning when installing the module:
+## Warning when installing modules
 
 Use either method only. Do not combine installation methods, such as starting with the build step below and proceeding to use the same build artifacts with the DKMS module. Otherwise the module built via dkms will fail to load with an `exec_format` error on newer kernels due to a mismatched version magic.
 
@@ -50,7 +53,7 @@ This is why the DKMS build step begins with a `make clean` step.
 
 For convenience, on platforms where DKMS is in use, skip to the DKMS section directly.
 
-## Clone the Git Repo:
+## Cloning the Git Repo
 
 ```sh
 git clone https://github.com/tuxedocomputers/tuxedo-keyboard.git
@@ -60,15 +63,15 @@ cd tuxedo-keyboard
 git checkout release
 ```
 
-## Build the Module:
+## Building the Module(s)
 
 ```sh
 make clean && make
 ```
 
-## The DKMS route:
+## The DKMS route
 
-### Add as DKMS Module:
+### Add as DKMS Module(s)
 
 Install the Module:
 ```sh
@@ -88,7 +91,7 @@ sudo modprobe tuxedo_keyboard
 
 You might also want to activate `tuxedo_io` module the same way if you are using [TCC](https://github.com/tuxedocomputers/tuxedo-control-center).
 
-### Uninstalling the DKMS module:
+### Uninstalling DKMS module(s)
 
 Remove the DKMS module and source:
 ```sh

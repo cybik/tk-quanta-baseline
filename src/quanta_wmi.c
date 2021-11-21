@@ -290,9 +290,6 @@ static int quanta_wmi_probe(struct wmi_device *wdev, const void *dummy_context)
 
 	pr_info("probe: Generic Quanta interface initialized\n");
 
-#if 1
-#endif
-
 	return 0;
 }
 
@@ -337,20 +334,21 @@ static void quanta_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 	}
 }
 
-void quanta_event_callb_buf(u8 buffer_len, u8* buffer_ptr)
+void quanta_event_callb_buf(u8 b_l, u8* b_ptr)
 {
 	// THIS WATCHES OVER THE STATE?
 	//  Check on windows wtf this "creates" in the UI to replicate state watch in Linux.
 	//  Current: 0/1/2 based on keyboard backlight level. 0: off - 1: mid - 2: blastoff
-	pr_info("notify:   objlen : %d\n", buffer_len);
-	pr_info("notify:   objptr : %p\n", buffer_ptr);
-	uint8_t qnt_data[buffer_len];
-	memcpy(qnt_data, buffer_ptr, buffer_len);
+	pr_info("notify:    objbuf : l: %d :: ptr: %p\n", b_l, b_ptr);
+	u8 qnt_data[b_l];
+	memcpy(qnt_data, b_ptr, b_l);
 	int i;
-	for(i = 0; i < (buffer_len/8); i++) {
-		pr_info("notify:   objval : 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X\n",
-				qnt_data[(i*8)+0], qnt_data[(i*8)+1], qnt_data[(i*8)+2], qnt_data[(i*8)+3],
-				qnt_data[(i*8)+4], qnt_data[(i*8)+5], qnt_data[(i*8)+6], qnt_data[(i*8)+7]
+	for(i = 0; i < (b_l/8); i++) {
+		pr_info("notify:    objval : 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X\n",
+			((i*8)+0)<b_l?qnt_data[(i*8)+0]:0, ((i*8)+1)<b_l?qnt_data[(i*8)+1]:0,
+			((i*8)+2)<b_l?qnt_data[(i*8)+2]:0, ((i*8)+3)<b_l?qnt_data[(i*8)+3]:0,
+			((i*8)+4)<b_l?qnt_data[(i*8)+4]:0, ((i*8)+5)<b_l?qnt_data[(i*8)+5]:0,
+			((i*8)+6)<b_l?qnt_data[(i*8)+6]:0, ((i*8)+7)<b_l?qnt_data[(i*8)+7]:0
 		);
 	}
 }

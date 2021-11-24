@@ -22,7 +22,7 @@
 #include <linux/wmi.h>
 #include <linux/version.h>
 #include <linux/delay.h>
-#include "quanta_interfaces.h"
+#include "eluk_interfaces.h"
 
 #define QUANTA_EC_REG_LDAT	0x8a
 #define QUANTA_EC_REG_HDAT	0x8b
@@ -289,13 +289,13 @@ u32 qnt_wmi_write_ec_ram(u16 addr, u8 data)
 #endif
 }
 
-struct quanta_interface_t quanta_wmi_interface = {
-	.string_id = QUANTA_INTERFACE_WMI_STRID,
+struct quanta_interface_t eluk_led_wmi_interface = {
+	.string_id = ELUK_LED_INTERFACE_WMI_STRID,
 	.read_ec_ram = qnt_wmi_read_ec_ram,
 	.write_ec_ram = qnt_wmi_write_ec_ram
 };
 
-static void quanta_wmi_init_check(struct wmi_device *wdev)
+static void eluk_led_wmi_init_check(void)
 {
 	acpi_status astatus;
 	union acpi_object *out_acpi;
@@ -329,9 +329,9 @@ static void quanta_wmi_init_check(struct wmi_device *wdev)
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
-static int quanta_wmi_probe(struct wmi_device *wdev)
+static int eluk_led_wmi_probe(struct wmi_device *wdev)
 #else
-static int quanta_wmi_probe(struct wmi_device *wdev, const void *dummy_context)
+static int eluk_led_wmi_probe(struct wmi_device *wdev, const void *dummy_context)
 #endif
 {
 	int status;
@@ -346,30 +346,30 @@ static int quanta_wmi_probe(struct wmi_device *wdev, const void *dummy_context)
 		return -ENODEV;
 	}
 
-	quanta_add_interface(&quanta_wmi_interface);
+	quanta_add_interface(&eluk_led_wmi_interface);
 
 	pr_info("probe: Generic Quanta interface initialized\n");
 
 	if(wmi_has_guid(QUANTA_WMI_MGMT_GUID_LED_RD_WR)) {
-		quanta_wmi_init_check(wdev);
+		eluk_led_wmi_init_check();
 	}
 	return 0;
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0)
-static int  quanta_wmi_remove(struct wmi_device *wdev)
+static int  eluk_led_wmi_remove(struct wmi_device *wdev)
 #else
-static void quanta_wmi_remove(struct wmi_device *wdev)
+static void eluk_led_wmi_remove(struct wmi_device *wdev)
 #endif
 {
 	pr_info("Driver removed. peace out.\n");
-	quanta_remove_interface(&quanta_wmi_interface);
+	quanta_remove_interface(&eluk_led_wmi_interface);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0)
 	return 0;
 #endif
 }
 
-static void quanta_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
+static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 {
 	pr_info("notify: Generic Quanta interface has received a signal\n");
 	pr_info("notify:  Generic Quanta interface Notify Info:\n");
@@ -377,18 +377,18 @@ static void quanta_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 	if (!obj) {
 		pr_debug("expected ACPI object doesn't exist\n");
 	} else if (obj->type == ACPI_TYPE_INTEGER) {
-		if (!IS_ERR_OR_NULL(quanta_wmi_interface.event_callb_int)) {
+		if (!IS_ERR_OR_NULL(eluk_led_wmi_interface.event_callb_int)) {
 			u32 code;
 			code = obj->integer.value;
 			// Execute registered callback
-			quanta_wmi_interface.event_callb_int(code);
+			eluk_led_wmi_interface.event_callb_int(code);
 		} else {
 			pr_debug("no registered callback\n");
 		}
 	} else if (obj->type == ACPI_TYPE_BUFFER) {
-		if (!IS_ERR_OR_NULL(quanta_wmi_interface.event_callb_buf)) {
+		if (!IS_ERR_OR_NULL(eluk_led_wmi_interface.event_callb_buf)) {
 			// Execute registered callback
-			quanta_wmi_interface.event_callb_buf(obj->buffer.length, obj->buffer.pointer);
+			eluk_led_wmi_interface.event_callb_buf(obj->buffer.length, obj->buffer.pointer);
 		} else {
 			pr_debug("no registered callback\n");
 		}
@@ -416,30 +416,30 @@ void quanta_event_callb_buf(u8 b_l, u8* b_ptr)
 	}
 }
 
-static const struct wmi_device_id quanta_wmi_device_ids[] = {
+static const struct wmi_device_id eluk_led_wmi_device_ids[] = {
 	// Listing one should be enough, for a driver that "takes care of all anyways"
 	//  also prevents probe (and handling) per "device"
 	// ...but list both anyway.
 	{ .guid_string = QUANTA_WMI_EVNT_GUID_MESG_MNTR },
-	//{ .guid_string = QUANTA_WMI_MGMT_GUID_LED_RD_WR },
+	{ .guid_string = QUANTA_WMI_MGMT_GUID_LED_RD_WR },
 	{ }
 };
 
-static struct wmi_driver quanta_wmi_driver = {
+static struct wmi_driver eluk_led_wmi_driver = {
 	.driver = {
-		.name	= QUANTA_INTERFACE_WMI_STRID,
+		.name	= ELUK_LED_INTERFACE_WMI_STRID,
 		.owner	= THIS_MODULE
 	},
-	.id_table	= quanta_wmi_device_ids,
-	.probe		= quanta_wmi_probe,
-	.remove		= quanta_wmi_remove,
-	.notify		= quanta_wmi_notify,
+	.id_table	= eluk_led_wmi_device_ids,
+	.probe		= eluk_led_wmi_probe,
+	.remove		= eluk_led_wmi_remove,
+	.notify		= eluk_led_wmi_notify,
 };
 
-module_wmi_driver(quanta_wmi_driver);
+module_wmi_driver(eluk_led_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
-MODULE_DESCRIPTION("Driver for Quanta-Based WMI interface, based on TUXEDO code");
+MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on TUXEDO code");
 MODULE_VERSION("0.0.1");
 MODULE_LICENSE("GPL");
 
@@ -452,5 +452,5 @@ MODULE_LICENSE("GPL");
 //module_param_cb(ec_direct_io, &param_ops_bool, &quanta_ec_direct, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 //MODULE_PARM_DESC(ec_direct_io, "Do not use WMI methods to read/write EC RAM (default: true).");
 
-MODULE_DEVICE_TABLE(wmi, quanta_wmi_device_ids);
-MODULE_ALIAS_QUANTA_WMI();
+MODULE_DEVICE_TABLE(wmi, eluk_led_wmi_device_ids);
+MODULE_ALIAS_ELUK_LED_WMI();

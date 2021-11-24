@@ -38,7 +38,7 @@ Modules included in this package:
 
 Additional modules not related to Tuxedo products:
 
-- quanta-wmi
+- eluk-led-wmi
 
 # Building and Installing <a name="building"></a>
 

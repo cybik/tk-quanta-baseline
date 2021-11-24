@@ -21,7 +21,7 @@ obj-m :=	./src/tuxedo_keyboard.o \
 		./src/clevo_acpi.o \
 		./src/tuxedo_io/tuxedo_io.o \
 		./src/uniwill_wmi.o \
-		./src/quanta_wmi.o
+		./src/eluk-led-wmi.o
 
 PWD := $(shell pwd)
 KDIR := /lib/modules/$(shell uname -r)/build

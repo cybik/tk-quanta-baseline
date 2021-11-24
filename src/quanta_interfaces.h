@@ -1,4 +1,3 @@
-
 /*!
  * Copyright (c) 2021 TUXEDO Computers GmbH <tux@tuxedocomputers.com>
  *
@@ -44,17 +43,17 @@
 #define QUANTA_WMI_EVENT_GUID_2	"	"
  */
 // based on Quanta decompile, this WMI ID is the conduit to write to ACPI_SMI
-#define QUANTA_WMI_MGMT_GUID_LED_WRITE  "644C5791-B7B0-4123-A90B-E93876E0DAAD"
+#define QUANTA_WMI_MGMT_GUID_LED_RD_WR  "644C5791-B7B0-4123-A90B-E93876E0DAAD" // AA ObjectID. Said to be a method.
 
 // based on Quanta decompile, this WMI ID is the communication *TO* the OS
 //  reference: MonitorWMIACPIEvent()
 #define QUANTA_WMI_EVNT_GUID_MESG_MNTR  "74286D6E-429C-427A-B34B-B5D15D032B05"
 
 #define MODULE_ALIAS_QUANTA_WMI() \
-	MODULE_ALIAS("wmi:" QUANTA_WMI_MGMT_GUID_LED_WRITE);
+	MODULE_ALIAS("wmi:" QUANTA_WMI_MGMT_GUID_LED_RD_WR);
 	MODULE_ALIAS("wmi:" QUANTA_WMI_EVNT_GUID_MESG_MNTR);
 
-#define QUANTA_INTERFACE_WMI_STRID "quanta_wmi"
+#define QUANTA_INTERFACE_WMI_STRID "eluk-led-wmi"
 
 typedef u32 (quanta_read_ec_ram_t)(u16, u8*);
 typedef u32 (quanta_write_ec_ram_t)(u16, u8);
@@ -106,7 +105,7 @@ u32 quanta_read_ec_ram(u16 address, u8 *data)
 	u32 status;
 
 	if (!IS_ERR_OR_NULL(quanta_interfaces.wmi)) {
-		pr_info("quanta_wmi: reading\n");
+		pr_info("quanta: reading\n");
 		status = quanta_interfaces.wmi->read_ec_ram(address, data);
 	} else {
 		pr_err("no active interface while read addr 0x%04x\n", address);
@@ -122,7 +121,7 @@ u32 quanta_write_ec_ram(u16 address, u8 data)
 	u32 status;
 
 	if (!IS_ERR_OR_NULL(quanta_interfaces.wmi)) {
-		pr_info("quanta_wmi: writing\n");
+		pr_info("quanta: writing\n");
 		status = quanta_interfaces.wmi->write_ec_ram(address, data);
 	} else {
 		pr_err("no active interface while write addr 0x%04x data 0x%02x\n", address, data);

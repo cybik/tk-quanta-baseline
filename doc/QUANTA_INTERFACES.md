@@ -1,12 +1,14 @@
 # Eluktronics Prometheus XVI data
 
-The following information is what the quanta_interfaces.h and eluk-led files are basing themselves on to
+The following information is what the `quanta_interfaces.h` and `eluk-*` files are basing themselves on to
 attempt interaction with the WMI interface. This has been documented as a reference point.
 
 ## Hey this looks legit
 
-It is **NOT**. This data is the result of sleuthing and sniffing around personally; @cybik (the author of the Eluktronics integration at this time) is not related to Eluktronics in any way,
+It is **EXTREMELY NOT**. This data is the result of sleuthing and sniffing around personally; @cybik (the author of the Eluktronics integration at this time) is not related to Eluktronics in any way,
 and only owns hardware sold by Eluktronics.
+
+I repeat: this work is completely unrelated to Eluktronics, and is a fully user/developer-driven, external development effort. There is no claim of anything being "official".
 
 ## What is this anyway?
 

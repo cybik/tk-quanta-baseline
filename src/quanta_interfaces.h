@@ -62,8 +62,8 @@
 #define QUANTA_WMI_MAGIC_NUMBER_SET_PWR_MODE	0x0300 //   768
 
 struct wmi_setting_struct {
-    u16 wmi_setting_a1_operation;	// a1, enum?
-    u16 wmi_setting_a2_op_target;	// a2, enum?
+    u16 wmi_setting_arg1_operation;	// a1, enum?
+    u16 wmi_setting_arg2_op_target;	// a2, enum?
 	u32 wmi_setting_arg3;			// a3
 	u32 wmi_setting_arg4;			// a4
 	u32 wmi_setting_arg5;			// a5

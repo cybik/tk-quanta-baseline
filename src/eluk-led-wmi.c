@@ -24,29 +24,30 @@
 #include <linux/delay.h>
 #include "eluk-led-wmi.h"
 
-#define QUANTA_EC_REG_LDAT	0x8a
-#define QUANTA_EC_REG_HDAT	0x8b
-#define QUANTA_EC_REG_FLAGS	0x8c
-#define QUANTA_EC_REG_CMDL	0x8d
-#define QUANTA_EC_REG_CMDH	0x8e
 
-#define QUANTA_EC_BIT_RFLG	0
-#define QUANTA_EC_BIT_WFLG	1
-#define QUANTA_EC_BIT_BFLG	2
-#define QUANTA_EC_BIT_CFLG	3
-#define QUANTA_EC_BIT_DRDY	7
+// start: unused?
+#define   QUANTA_EC_REG_LDAT	0x8a
+#define   QUANTA_EC_REG_HDAT	0x8b
+#define   QUANTA_EC_REG_FLAGS	0x8c
+#define   QUANTA_EC_REG_CMDL	0x8d
+#define   QUANTA_EC_REG_CMDH	0x8e
 
-#define QNT_EC_WAIT_CYCLES	0x50
+#define   QUANTA_EC_BIT_RFLG	0
+#define   QUANTA_EC_BIT_WFLG	1
+#define   QUANTA_EC_BIT_BFLG	2
+#define   QUANTA_EC_BIT_CFLG	3
+#define   QUANTA_EC_BIT_DRDY	7
 
-//static bool quanta_ec_direct = true;
-static bool quanta_ec_direct = false;
+#define   QNT_EC_WAIT_CYCLES	0x50
+
+//  stop: unused?
 
 static u8 baseline_solid[5][32] = {
 	//  0     1     2     3     4     5     6     7     8     9    10    11
 	{0x00, 0xFB, 0x00, 0x01, 0x08, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // trunk/logo?
 	{0x00, 0xFB, 0x00, 0x01, 0x07, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // logo/trunk?
-	{0x00, 0xFB, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x15, 0xFF, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // led3 // red to right
-	//{0x00, 0xFB, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x15, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // led3 // blue to right
+	//{0x00, 0xFB, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x15, 0xFF, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // led3 // red to right
+	{0x00, 0xFB, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x15, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // led3 // blue to right
 	{0x00, 0xFB, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // led2
 	{0x00, 0xFB, 0x00, 0x01, 0x05, 0x00, 0x00, 0x00, 0xFF, 0x06, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // led1
 };
@@ -69,231 +70,10 @@ static u8 baseline_breathing_100[5][32] = {
 };
 
 
-#define HARD_DISABLE_WRITES 1
-
-DEFINE_MUTEX(quanta_ec_lock);
-
-static u32 qnt_wmi_ec_evaluate(u8 addr_low, u8 addr_high, u8 data_low, u8 data_high, u8 read_flag, u32 *return_buffer)
-{
-	acpi_status status;
-	union acpi_object *out_acpi;
-	u32 e_result = 0;
-
-	// Kernel buffer for input argument
-	u32 *wmi_arg = (u32 *) kmalloc(sizeof(u32)*10, GFP_KERNEL);
-	// Byte reference to the input buffer
-	u8 *wmi_arg_bytes = (u8 *) wmi_arg;
-
-	u8 wmi_instance = 0x00;
-	u32 wmi_method_id = 0x04;
-	struct acpi_buffer wmi_in = { (acpi_size) sizeof(wmi_arg), wmi_arg};
-	struct acpi_buffer wmi_out = { ACPI_ALLOCATE_BUFFER, NULL };
-
-	mutex_lock(&quanta_ec_lock);
-
-	// Zero input buffer
-	memset(wmi_arg, 0x00, 10 * sizeof(u32));
-
-	// Configure the input buffer
-	wmi_arg_bytes[0] = addr_low;
-	wmi_arg_bytes[1] = addr_high;
-	wmi_arg_bytes[2] = data_low;
-	wmi_arg_bytes[3] = data_high;
-
-	if (read_flag != 0) {
-		wmi_arg_bytes[5] = 0x01;
-	}
-	
-	status = wmi_evaluate_method(ELUK_WMI_MGMT_GUID_LED_RD_WR, wmi_instance, wmi_method_id, &wmi_in, &wmi_out);
-	out_acpi = (union acpi_object *) wmi_out.pointer;
-
-	if (out_acpi && out_acpi->type == ACPI_TYPE_BUFFER) {
-		memcpy(return_buffer, out_acpi->buffer.pointer, out_acpi->buffer.length);
-	} /* else if (out_acpi && out_acpi->type == ACPI_TYPE_INTEGER) {
-		e_result = (u32) out_acpi->integer.value;
-	}*/
-	if (ACPI_FAILURE(status)) {
-		pr_err("quanta.c: Error evaluating method\n");
-		e_result = -EIO;
-	}
-
-	kfree(out_acpi);
-	kfree(wmi_arg);
-
-	mutex_unlock(&quanta_ec_lock);
-
-	return e_result;
-}
-
-/**
- * EC address read through WMI
- */
-static u32 qnt_ec_read_addr_wmi(u8 addr_low, u8 addr_high, union qnt_ec_read_return *output)
-{
-	u32 qnt_data[10];
-	u32 ret = qnt_wmi_ec_evaluate(addr_low, addr_high, 0x00, 0x00, 1, qnt_data);
-	output->dword = qnt_data[0];
-	pr_debug("addr: 0x%02x%02x value: %0#4x (high: %0#4x) result: %d\n", addr_high, addr_low, output->bytes.data_low, output->bytes.data_high, ret);
-	return ret;
-}
-
-/**
- * EC address write through WMI
- */
-static u32 qnt_ec_write_addr_wmi(u8 addr_low, u8 addr_high, u8 data_low, u8 data_high, union qnt_ec_write_return *output)
-{
-#if defined(HARD_DISABLE_WRITES)
-	return 0;
-#else
-	u32 qnt_data[10];
-	u32 ret = qnt_wmi_ec_evaluate(addr_low, addr_high, data_low, data_high, 0, qnt_data);
-	output->dword = qnt_data[0];
-	return ret;
-#endif
-}
-
-/**
- * Direct EC address read
- */
-static u32 qnt_ec_read_addr_direct(u8 addr_low, u8 addr_high, union qnt_ec_read_return *output)
-{
-	u32 result;
-	u8 tmp, count, flags;
-
-	mutex_lock(&quanta_ec_lock);
-
-	ec_write(QUANTA_EC_REG_LDAT, addr_low);
-	ec_write(QUANTA_EC_REG_HDAT, addr_high);
-
-	flags = (0 << QUANTA_EC_BIT_DRDY) | (1 << QUANTA_EC_BIT_RFLG);
-	ec_write(QUANTA_EC_REG_FLAGS, flags);
-
-	// Wait for ready flag
-	count = QNT_EC_WAIT_CYCLES;
-	ec_read(QUANTA_EC_REG_FLAGS, &tmp);
-	while (((tmp & (1 << QUANTA_EC_BIT_DRDY)) == 0) && count != 0) {
-		msleep(1);
-		ec_read(QUANTA_EC_REG_FLAGS, &tmp);
-		count -= 1;
-	}
-
-	if (count != 0) {
-		output->dword = 0;
-		ec_read(QUANTA_EC_REG_CMDL, &tmp);
-		output->bytes.data_low = tmp;
-		ec_read(QUANTA_EC_REG_CMDH, &tmp);
-		output->bytes.data_high = tmp;
-		result = 0;
-	} else {
-		output->dword = 0xfefefefe;
-		result = -EIO;
-	}
-
-	ec_write(QUANTA_EC_REG_FLAGS, 0x00);
-
-	mutex_unlock(&quanta_ec_lock);
-
-	// pr_debug("addr: 0x%02x%02x value: %0#4x result: %d\n", addr_high, addr_low, output->bytes.data_low, result);
-
-	return result;
-}
-
-static u32 qnt_ec_write_addr_direct(u8 addr_low, u8 addr_high, u8 data_low, u8 data_high, union qnt_ec_write_return *output)
-{
-#if defined(HARD_DISABLE_WRITES)
-	return 0;
-#else
-	u32 result = 0;
-	u8 tmp, count, flags;
-
-	mutex_lock(&quanta_ec_lock);
-
-	ec_write(QUANTA_EC_REG_LDAT, addr_low);
-	ec_write(QUANTA_EC_REG_HDAT, addr_high);
-	ec_write(QUANTA_EC_REG_CMDL, data_low);
-	ec_write(QUANTA_EC_REG_CMDH, data_high);
-
-	flags = (0 << QUANTA_EC_BIT_DRDY) | (1 << QUANTA_EC_BIT_WFLG);
-	ec_write(QUANTA_EC_REG_FLAGS, flags);
-
-	// Wait for ready flag
-	count = QNT_EC_WAIT_CYCLES;
-	ec_read(QUANTA_EC_REG_FLAGS, &tmp);
-	while (((tmp & (1 << QUANTA_EC_BIT_DRDY)) == 0) && count != 0) {
-		msleep(1);
-		ec_read(QUANTA_EC_REG_FLAGS, &tmp);
-		count -= 1;
-	}
-
-	// Replicate wmi output depending on success
-	if (count != 0) {
-		output->bytes.addr_low = addr_low;
-		output->bytes.addr_high = addr_high;
-		output->bytes.data_low = data_low;
-		output->bytes.data_high = data_high;
-		result = 0;
-	} else {
-		output->dword = 0xfefefefe;
-		result = -EIO;
-	}
-
-	ec_write(QUANTA_EC_REG_FLAGS, 0x00);
-
-	mutex_unlock(&quanta_ec_lock);
-
-	return result;
-#endif
-}
-
-u32 qnt_wmi_read_ec_ram(u16 addr, u8 *data)
-{
-	u32 result;
-	u8 addr_low, addr_high;
-	union qnt_ec_read_return output;
-
-	if (IS_ERR_OR_NULL(data))
-		return -EINVAL;
-
-	addr_low = addr & 0xff;
-	addr_high = (addr >> 8) & 0xff;
-
-	if (quanta_ec_direct) {
-		result = qnt_ec_read_addr_direct(addr_low, addr_high, &output);
-	} else {
-		result = qnt_ec_read_addr_wmi(addr_low, addr_high, &output);
-	}
-
-	*data = output.bytes.data_low;
-	return result;
-}
-
-u32 qnt_wmi_write_ec_ram(u16 addr, u8 data)
-{
-#if defined(HARD_DISABLE_WRITES)
-	return 0;
-#else
-	u32 result;
-	u8 addr_low, addr_high, data_low, data_high;
-	union qnt_ec_write_return output;
-
-	addr_low = addr & 0xff;
-	addr_high = (addr >> 8) & 0xff;
-	data_low = data;
-	data_high = 0x00;
-
-	if (quanta_ec_direct)
-		result = qnt_ec_write_addr_direct(addr_low, addr_high, data_low, data_high, &output);
-	else
-		result = qnt_ec_write_addr_wmi(addr_low, addr_high, data_low, data_high, &output);
-
-	return result;
-#endif
-}
+DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
 struct quanta_interface_t eluk_led_wmi_interface = {
 	.string_id = ELUK_LED_INTERFACE_WMI_STRID,
-	//.read_ec_ram = qnt_wmi_read_ec_ram,
-	//.write_ec_ram = qnt_wmi_write_ec_ram
 };
 
 static void eluk_led_wmi_run_query(void)

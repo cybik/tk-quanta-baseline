@@ -49,33 +49,7 @@
 	MODULE_ALIAS("wmi:" QUANTA_WMI_EVNT_GUID_MESG_MNTR);
 */
 
-/**
- *
- * @brief  wmi_setting_target reference from the Quanta upstream
- * 
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | Name				| Settings					| Outcome																													|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | Get LED status?	| a0 = 0xFA00	a1 = 0x0100	| If nothing is put aside from a1 and a2, it seems as if there is a returned value. check.									|
- * |					|							| Per spec, a2 contains the RGB setting, but might be only one? or memory shenanigans for everything? this one is danger.	|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | Get Hardware Info	| a0 = 0xFA00	a1 = 0x0200	| Data available? Check if can be read immediately post.																	|
- * |					|							| a2: CPU Temp, a3: GPU Temp, a4: CPU fan speed, a5: GPU fan speed, a6: Monitor alpha? might be brightness?					|
- * |					|							| Temps unnecessary, fan speeds could be interesting.																		|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | BIOS Version Check	| a0 = 0xFA00	a1 = 0x0201	| Data available? Check if can be read immediately post. a0 would become the bios version post smi on Windows?				|
- * |					|							| Interestingly, this also returns keyboard states in a2. Sleuth more to reverse this properly.								|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | Set LEDs			| a0 = 0xFB00	a1 = 0x0100	| Colors are in #AARRGGBB format (bytes inverted, little endian)															|
- * | 					| a2 = zone		a3 = colors	| Magic values: a2 = 6 to set all zones; a2 = 0 to set all devices?															|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | Set "Win Key"		| a0 = 0xFB00	a1 = 0x0200	| a6 to 0 to disable the Win key, 1 to enable the Win key																	|
- * |					| a6: bool					| Note: there seems to be no way to check from code (per the Quanta app)													|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * | Set "Power Mode"	| a0 = 0xFB00	a1 = 0x0300	| Unknown																													|
- * |					| a2 = some numbers			|																															|
- * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- */
+// Please refer to the QUANTA_INTERFACES.md document for information on the magicks.
 
 #define QUANTA_WMI_MAGIC_NUMBER_GET_BLOCK		0xFA00 // 64000
 #define QUANTA_WMI_MAGIC_NUMBER_GET_LEDS		0x0100 //   256

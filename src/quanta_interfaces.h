@@ -21,7 +21,6 @@
 
 #include <linux/types.h>
 
-
 /* ::::  Module specific Constants and simple Macros   :::: */
 #define __TUXEDO_PR(lvl, fmt, ...) do { pr_##lvl(fmt, ##__VA_ARGS__); } while (0)
 #define TUXEDO_INFO(fmt, ...) __TUXEDO_PR(info, fmt, ##__VA_ARGS__)
@@ -29,35 +28,76 @@
 #define TUXEDO_DEBUG(fmt, ...) __TUXEDO_PR(debug, "[%s:%u] " fmt, __func__, __LINE__, ##__VA_ARGS__)
 
 
-// doc to understand wtf
-//  https://github.com/microsoft/Windows-driver-samples/blob/master/wmi/wmiacpi/device.asl#L48
-/**
- * Originals
 
-#define QUANTA_WMI_MGMT_GUID_BA	"ABBC0F6D-8EA1-11D1-00A0-C90629100000"
-#define QUANTA_WMI_MGMT_GUID_BB	"ABBC0F6E-8EA1-11D1-00A0-C90629100000"
-#define QUANTA_WMI_MGMT_GUID_BC	"ABBC0F6F-8EA1-11D1-00A0-C90629100000"
+// The following GUIDs were discovered on the basis of analysis of Quanta's tool and WMI sleuthing,
+//  However, these were encountered in the wild only on an Eluktronics device as of this writing.
+//
+// Validating this WMI with other Quantas, such as the Casper Excalibur G911, require investment.
+//  Thus, let "downstream" declare the WMI UDIDs for now.
 
-#define QUANTA_WMI_EVENT_GUID_0	"ABBC0F70-8EA1-11D1-00A0-C90629100000"
-#define QUANTA_WMI_EVENT_GUID_1	"ABBC0F71-8EA1-11D1-00A0-C90629100000"
-#define QUANTA_WMI_EVENT_GUID_2	"	"
- */
-// based on Quanta decompile, this WMI ID is the conduit to write to ACPI_SMI
-#define QUANTA_WMI_MGMT_GUID_LED_RD_WR  "644C5791-B7B0-4123-A90B-E93876E0DAAD" // AA ObjectID. Said to be a method.
+// This WMI ID should be the conduit to write to ACPI_SMI, and read from it as well, 
+//  via set_block/query_block.
+//#define QUANTA_WMI_MGMT_GUID_LED_RD_WR  "644C5791-B7B0-4123-A90B-E93876E0DAAD"
 
-// based on Quanta decompile, this WMI ID is the communication *TO* the OS
-//  reference: MonitorWMIACPIEvent()
-#define QUANTA_WMI_EVNT_GUID_MESG_MNTR  "74286D6E-429C-427A-B34B-B5D15D032B05"
+// This WMI ID is the communication *TO* the OS
+//#define QUANTA_WMI_EVNT_GUID_MESG_MNTR  "74286D6E-429C-427A-B34B-B5D15D032B05"
 
-// get rid?
+// Here to base newer modules off of.
+/*
 #define MODULE_ALIAS_QUANTA_WMI() \
 	MODULE_ALIAS("wmi:" QUANTA_WMI_MGMT_GUID_LED_RD_WR); \
 	MODULE_ALIAS("wmi:" QUANTA_WMI_EVNT_GUID_MESG_MNTR);
+*/
 
-#define QUANTA_INTERFACE_WMI_STRID "eluk-led-wmi"
+/**
+ *
+ * @brief  wmi_setting_target reference from the Quanta upstream
+ * 
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | Name				| Settings					| Outcome																													|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | Get LED status?	| a0 = 0xFA00	a1 = 0x0100	| If nothing is put aside from a1 and a2, it seems as if there is a returned value. check.									|
+ * |					|							| Per spec, a2 contains the RGB setting, but might be only one? or memory shenanigans for everything? this one is danger.	|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | Get Hardware Info	| a0 = 0xFA00	a1 = 0x0200	| Data available? Check if can be read immediately post.																	|
+ * |					|							| a2: CPU Temp, a3: GPU Temp, a4: CPU fan speed, a5: GPU fan speed, a6: Monitor alpha? might be brightness?					|
+ * |					|							| Temps unnecessary, fan speeds could be interesting.																		|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | BIOS Version Check	| a0 = 0xFA00	a1 = 0x0201	| Data available? Check if can be read immediately post. a0 would become the bios version post smi on Windows?				|
+ * |					|							| Interestingly, this also returns keyboard states in a2. Sleuth more to reverse this properly.								|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | Set LEDs			| a0 = 0xFB00	a1 = 0x0100	| Colors are in #AARRGGBB format (bytes inverted, little endian)															|
+ * | 					| a2 = zone		a3 = colors	| Magic values: a2 = 6 to set all zones; a2 = 0 to set all devices?															|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | Set "Win Key"		| a0 = 0xFB00	a1 = 0x0200	| a6 to 0 to disable the Win key, 1 to enable the Win key																	|
+ * |					| a6: bool					| Note: there seems to be no way to check from code (per the Quanta app)													|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * | Set "Power Mode"	| a0 = 0xFB00	a1 = 0x0300	| Unknown																													|
+ * |					| a2 = some numbers			|																															|
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
 
-typedef u32 (quanta_read_ec_ram_t)(u16, u8*);
-typedef u32 (quanta_write_ec_ram_t)(u16, u8);
+#define QUANTA_WMI_MAGIC_NUMBER_GET_BLOCK		0xFA00 // 64000
+#define QUANTA_WMI_MAGIC_NUMBER_GET_LEDS		0x0100 //   256
+#define QUANTA_WMI_MAGIC_NUMBER_GET_HW_INFO		0x0200 //   512
+#define QUANTA_WMI_MAGIC_NUMBER_GET_BIOS_VER	0x0201 //   513
+
+#define QUANTA_WMI_MAGIC_NUMBER_SET_BLOCK		0xFB00 // 64256
+#define QUANTA_WMI_MAGIC_NUMBER_SET_PRETTY		0x0100 //   256
+#define QUANTA_WMI_MAGIC_NUMBER_SET_WIN_KEY		0x0200 //   512
+#define QUANTA_WMI_MAGIC_NUMBER_SET_PWR_MODE	0x0300 //   768
+
+struct wmi_setting_struct {
+    u16 wmi_setting_a1_operation;	// a1, enum?
+    u16 wmi_setting_a2_op_target;	// a2, enum?
+	u32 wmi_setting_arg3;			// a3
+	u32 wmi_setting_arg4;			// a4
+	u32 wmi_setting_arg5;			// a5
+	u32 wmi_setting_arg6;			// a6
+	u32 wmi_setting_rev0;			// unused
+	u32 wmi_setting_rev1;			// unused
+} __attribute__((packed));
+
 typedef void (quanta_event_callb_int_t)(u32);
 typedef void (quanta_event_callb_buf_t)(u8, u8*);
 
@@ -65,14 +105,10 @@ struct quanta_interface_t {
 	char *string_id;
 	quanta_event_callb_int_t *event_callb_int;
 	quanta_event_callb_buf_t *event_callb_buf;
-	quanta_read_ec_ram_t *read_ec_ram;
-	quanta_write_ec_ram_t *write_ec_ram;
 };
 
-u32 quanta_add_interface(struct quanta_interface_t *new_interface);
-u32 quanta_remove_interface(struct quanta_interface_t *interface);
-quanta_read_ec_ram_t quanta_read_ec_ram;
-quanta_write_ec_ram_t quanta_write_ec_ram;
+u32 quanta_add_interface(const char* name, struct quanta_interface_t *new_interface);
+u32 quanta_remove_interface(const char* name, struct quanta_interface_t *interface);
 u32 quanta_get_active_interface_id(char **id_str);
 
 union qnt_ec_read_return {
@@ -101,46 +137,14 @@ quanta_event_callb_int_t quanta_event_callb_int;
 quanta_event_callb_buf_t quanta_event_callb_buf;
 
 
-u32 quanta_read_ec_ram(u16 address, u8 *data)
-{
-	u32 status;
-
-	if (!IS_ERR_OR_NULL(quanta_interfaces.wmi)) {
-		pr_info("quanta: reading\n");
-		status = quanta_interfaces.wmi->read_ec_ram(address, data);
-	} else {
-		pr_err("no active interface while read addr 0x%04x\n", address);
-		status = -EIO;
-	}
-
-	return status;
-}
-EXPORT_SYMBOL(quanta_read_ec_ram);
-
-u32 quanta_write_ec_ram(u16 address, u8 data)
-{
-	u32 status;
-
-	if (!IS_ERR_OR_NULL(quanta_interfaces.wmi)) {
-		pr_info("quanta: writing\n");
-		status = quanta_interfaces.wmi->write_ec_ram(address, data);
-	} else {
-		pr_err("no active interface while write addr 0x%04x data 0x%02x\n", address, data);
-		status = -EIO;
-	}
-
-	return status;
-}
-EXPORT_SYMBOL(quanta_write_ec_ram);
-
-
 static DEFINE_MUTEX(quanta_interface_modification_lock);
 
-u32 quanta_add_interface(struct quanta_interface_t *interface)
+u32 quanta_add_interface(const char* interface_name,
+						 struct quanta_interface_t *interface)
 {
 	mutex_lock(&quanta_interface_modification_lock);
 
-	if (strcmp(interface->string_id, QUANTA_INTERFACE_WMI_STRID) == 0) {
+	if (strcmp(interface->string_id, interface_name) == 0) {
 		quanta_interfaces.wmi = interface;
 	} else {
 		TUXEDO_DEBUG("trying to add unknown interface\n");
@@ -152,21 +156,16 @@ u32 quanta_add_interface(struct quanta_interface_t *interface)
 
 	mutex_unlock(&quanta_interface_modification_lock);
 
-	// Initialize driver if not already present
-	//tuxedo_keyboard_init_driver(&quanta_keyboard_driver);
-
 	return 0;
 }
 EXPORT_SYMBOL(quanta_add_interface);
 
-u32 quanta_remove_interface(struct quanta_interface_t *interface)
+u32 quanta_remove_interface(const char* interface_name, 
+							struct quanta_interface_t *interface)
 {
 	mutex_lock(&quanta_interface_modification_lock);
 
-	if (strcmp(interface->string_id, QUANTA_INTERFACE_WMI_STRID) == 0) {
-		// Remove driver if last interface is removed
-		//tuxedo_keyboard_remove_driver(&quanta_keyboard_driver);
-
+	if (strcmp(interface->string_id, interface_name) == 0) {
 		quanta_interfaces.wmi = NULL;
 	} else {
 		mutex_unlock(&quanta_interface_modification_lock);
@@ -195,56 +194,5 @@ void quanta_event_callb_int(u32 code)
 {
 	// NOOP
 }
-/*
-void quanta_event_callb(u32 code)
-{
-	if (quanta_keyboard_driver.input_device != NULL)
-		if (!sparse_keymap_report_known_event(quanta_keyboard_driver.input_device, code, 1, true)) {
-			TUXEDO_DEBUG("Unknown code - %d (%0#6x)\n", code, code);
-		}
-
-	// Special key combination when mode change key is pressed
-	if (code == 0xb0) {
-		input_report_key(quanta_keyboard_driver.input_device, KEY_LEFTMETA, 1);
-		input_report_key(quanta_keyboard_driver.input_device, KEY_LEFTALT, 1);
-		input_report_key(quanta_keyboard_driver.input_device, KEY_F6, 1);
-		input_sync(quanta_keyboard_driver.input_device);
-		input_report_key(quanta_keyboard_driver.input_device, KEY_F6, 0);
-		input_report_key(quanta_keyboard_driver.input_device, KEY_LEFTALT, 0);
-		input_report_key(quanta_keyboard_driver.input_device, KEY_LEFTMETA, 0);
-		input_sync(quanta_keyboard_driver.input_device);
-	}
-
-	// Keyboard backlight brightness toggle
-	if (quanta_kbd_bl_type_rgb_single_color) {
-		switch (code) {
-		case UNIWILL_OSD_KB_LED_LEVEL0:
-			kbd_led_state_uw.brightness = 0x00;
-			quanta_write_kbd_bl_state();
-			break;
-		case UNIWILL_OSD_KB_LED_LEVEL1:
-			kbd_led_state_uw.brightness = 0x20;
-			quanta_write_kbd_bl_state();
-			break;
-		case UNIWILL_OSD_KB_LED_LEVEL2:
-			kbd_led_state_uw.brightness = 0x50;
-			quanta_write_kbd_bl_state();
-			break;
-		case UNIWILL_OSD_KB_LED_LEVEL3:
-			kbd_led_state_uw.brightness = 0x80;
-			quanta_write_kbd_bl_state();
-			break;
-		case UNIWILL_OSD_KB_LED_LEVEL4:
-			kbd_led_state_uw.brightness = 0xc8;
-			quanta_write_kbd_bl_state();
-			break;
-		// Also refresh keyboard state on cable switch event
-		case UNIWILL_OSD_DC_ADAPTER_CHANGE:
-			quanta_write_kbd_bl_state();
-			break;
-		}
-	}
-}
-*/
 
 #endif

@@ -3,6 +3,29 @@
 The following information is what the quanta_interfaces.h and eluk-led files are basing themselves on to
 attempt interaction with the WMI interface. This has been documented as a reference point.
 
+## Hey this looks legit
+
+It is **NOT**. This data is the result of sleuthing and sniffing around personally; @cybik (the author of the Eluktronics integration at this time) is not related to Eluktronics in any way,
+and only owns hardware sold by Eluktronics.
+
+## What is this anyway?
+
+The data contained here should help you poke at an Eluktronics Prometheus XVI's RW_GMWMI interface with a chance of it not exploding.
+
+## Doesn't look like Windows stuff to me
+
+Look at the ControlCenter app with dotPeek or Jetbrains Rider and thank me later.
+
+## "chance of it not exploding" sounds ominous.
+
+This is research-type data to *develop* Linux support for hardware. It is not intended for users, so yeah, here there be dragons.
+
+## I'm a dev and I have this hardware. How do I use it?
+
+`wmi_query_block` and `wmi_set_block`. If you're already out of your depth here, abandon all hope. Again, this is technical details, not user stuff.
+
+# Data
+
 |Operation|Settings|Outcome|
 |--- |--- |--- |
 |Get LED status?|a0 = 0xFA00 a1 = 0x0100|If nothing is put aside from a1 and a2, it seems as if there is a returned value. check.<br/>Per spec, a2 contains the RGB setting, but might be only one? or memory shenanigans for everything? this one is danger.|

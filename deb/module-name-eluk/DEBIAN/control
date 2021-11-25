@@ -1,0 +1,11 @@
+Package: module-name
+Version: x.x.x
+Section: admin
+Priority: optional
+Depends: dkms (>= 1.95)
+Maintainer: Renaud Lepage <root@cybukbase.com>
+Homepage: https://github.com/cybik/tk-quanta-baseline
+Architecture: all
+Description: Kernel module for Eluktronics Prometheus XVI WMI Controls
+Unofficial WMI control driver for the Eluktronics Prometheus XVI,
+meant for use with the DKMS framework.

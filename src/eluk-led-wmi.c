@@ -50,18 +50,18 @@
 // Module-wide values for setting. Has "original" unset default values
 
 // Default Color Settings
-static uint eluk_kbd_rgb_logo_color  = 0x00FFFF; // Default: Nani
-static uint eluk_kbd_rgb_trunk_color = 0x00FFFF; // Default: Nani
-static uint eluk_kbd_rgb_left_color  = 0xFF0000; // Default: Red
-static uint eluk_kbd_rgb_cntr_color  = 0x00FF00; // Default: Green
-static uint eluk_kbd_rgb_right_color = 0x0000FF; // Default: Blue
+static uint eluk_kbd_rgb_set_logo_color  = 0x00FFFF; // Default: Nani
+static uint eluk_kbd_rgb_set_trunk_color = 0x00FFFF; // Default: Nani
+static uint eluk_kbd_rgb_set_left_color  = 0xFF0000; // Default: Red
+static uint eluk_kbd_rgb_set_cntr_color  = 0x00FF00; // Default: Green
+static uint eluk_kbd_rgb_set_right_color = 0x0000FF; // Default: Blue
 
 // Default Effect / Intensity Settings. use << 5? - issue is the base storage is too big argh
-static uint eluk_kbd_rgb_logo_alpha  = 0x10; // Default: Online? to check
-static uint eluk_kbd_rgb_trunk_alpha = 0x10; // Default: Online? to check
-static uint eluk_kbd_rgb_left_alpha  = 0x12; // Default: 100%
-static uint eluk_kbd_rgb_cntr_alpha  = 0x12; // Default: 100%
-static uint eluk_kbd_rgb_right_alpha = 0x12; // Default: 100%
+static uint eluk_kbd_rgb_set_logo_alpha  = 0x10; // Default: Online? to check
+static uint eluk_kbd_rgb_set_trunk_alpha = 0x10; // Default: Online? to check
+static uint eluk_kbd_rgb_set_left_alpha  = 0x12; // Default: 100%
+static uint eluk_kbd_rgb_set_cntr_alpha  = 0x12; // Default: 100%
+static uint eluk_kbd_rgb_set_right_alpha = 0x12; // Default: 100%
 
 // Baseline unions for now.
 
@@ -266,19 +266,19 @@ static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_p
     // If this is reached, launch commit. The input is not important.
     union wmi_setting create_struct[5] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
-        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_logo_alpha  << 24) + eluk_kbd_rgb_logo_color),
+        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_set_logo_alpha  << 24) + eluk_kbd_rgb_set_logo_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
-        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_trunk_alpha << 24) + eluk_kbd_rgb_trunk_color),
+        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_set_trunk_alpha << 24) + eluk_kbd_rgb_set_trunk_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
-        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_right_alpha  << 24) + eluk_kbd_rgb_right_color),
+        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_set_right_alpha  << 24) + eluk_kbd_rgb_set_right_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led2 - centre
-        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_rgb_cntr_alpha  << 24) + eluk_kbd_rgb_cntr_color),
+        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_rgb_set_cntr_alpha  << 24) + eluk_kbd_rgb_set_cntr_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led1 - left
-        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_left_alpha << 24) + eluk_kbd_rgb_left_color),
+        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_set_left_alpha << 24) + eluk_kbd_rgb_set_left_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, 
     };
     
@@ -290,13 +290,13 @@ static int eluk_led_wmi_colors_commit_kbd(const char *val, const struct kernel_p
     // If this is reached, launch commit. The input is not important.
     union wmi_setting create_struct[3] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
-        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_right_alpha  << 24) + eluk_kbd_rgb_right_color),
+        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_set_right_alpha  << 24) + eluk_kbd_rgb_set_right_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led2 - centre
-        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_rgb_cntr_alpha  << 24) + eluk_kbd_rgb_cntr_color),
+        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_rgb_set_cntr_alpha  << 24) + eluk_kbd_rgb_set_cntr_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led1 - left
-        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_left_alpha << 24) + eluk_kbd_rgb_left_color),
+        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_set_left_alpha << 24) + eluk_kbd_rgb_set_left_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     };
     return eluk_led_wmi_set_value_exec(create_struct, 3);
@@ -307,7 +307,7 @@ static int eluk_led_wmi_colors_commit_trunk(const char *val, const struct kernel
     // If this is reached, launch commit. The input is not important.
     union wmi_setting create_struct[1] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
-        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_trunk_alpha << 24) + eluk_kbd_rgb_trunk_color),
+        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_set_trunk_alpha << 24) + eluk_kbd_rgb_set_trunk_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
     };
     return eluk_led_wmi_set_value_exec(create_struct, 1);
@@ -318,7 +318,7 @@ static int eluk_led_wmi_colors_commit_logo(const char *val, const struct kernel_
     // If this is reached, launch commit. The input is not important.
     union wmi_setting create_struct[1] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
-        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_logo_alpha  << 24) + eluk_kbd_rgb_logo_color),
+        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_set_logo_alpha  << 24) + eluk_kbd_rgb_set_logo_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
     };
     return eluk_led_wmi_set_value_exec(create_struct, 1);
@@ -369,39 +369,39 @@ MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_100, "Trigger testing. Read and W
 // endsection: preset ops
 
 // section: Zone Colors
-module_param(eluk_kbd_rgb_logo_color, uint, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_logo_color, "Color for the Logo.");
+module_param(eluk_kbd_rgb_set_logo_color, uint, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_color, "Color for the Logo.");
 
-module_param(eluk_kbd_rgb_trunk_color, uint, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_trunk_color, "Color for the Trunk.");
+module_param(eluk_kbd_rgb_set_trunk_color, uint, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_color, "Color for the Trunk.");
 
-module_param(eluk_kbd_rgb_left_color, uint, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_left_color, "Color for the Left.");
+module_param(eluk_kbd_rgb_set_left_color, uint, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_left_color, "Color for the Left.");
 
-module_param(eluk_kbd_rgb_cntr_color, uint, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_cntr_color, "Color for the Center.");
+module_param(eluk_kbd_rgb_set_cntr_color, uint, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_color, "Color for the Center.");
 
-module_param(eluk_kbd_rgb_right_color, uint, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_right_color, "Color for the Right.");
+module_param(eluk_kbd_rgb_set_right_color, uint, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_right_color, "Color for the Right.");
 // endsection: Zone Colors
 
 
 // section: Effect/Brightness Setting
 // TODO: can these be made smaller my lord.
-module_param(eluk_kbd_rgb_logo_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_logo_alpha, "Effect / Brightness for the Logo.");
+module_param(eluk_kbd_rgb_set_logo_alpha, int, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_alpha, "Effect / Brightness for the Logo.");
 
-module_param(eluk_kbd_rgb_trunk_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_trunk_alpha, "Effect / Brightness for the Trunk.");
+module_param(eluk_kbd_rgb_set_trunk_alpha, int, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_alpha, "Effect / Brightness for the Trunk.");
 
-module_param(eluk_kbd_rgb_left_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_left_alpha, "Effect / Brightness for the Left.");
+module_param(eluk_kbd_rgb_set_left_alpha, int, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_left_alpha, "Effect / Brightness for the Left.");
 
-module_param(eluk_kbd_rgb_cntr_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_cntr_alpha, "Effect / Brightness for the Center.");
+module_param(eluk_kbd_rgb_set_cntr_alpha, int, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_alpha, "Effect / Brightness for the Center.");
 
-module_param(eluk_kbd_rgb_right_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_right_alpha, "Effect / Brightness for the Right.");
+module_param(eluk_kbd_rgb_set_right_alpha, int, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_rgb_set_right_alpha, "Effect / Brightness for the Right.");
 // endsection: Effect/Brightness Setting
 
 

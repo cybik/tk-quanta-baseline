@@ -1,5 +1,9 @@
 # Table of Contents
-- <a href="#notice">Notice</a>
+
+- [Notice](#notice)
+  - [Hey this looks legit](#legit)
+  - [What are you doing here?](#nani)
+  - [Why tho](#doushite)
 - <a href="#description">Description</a>
 - <a href="#building">Building and Install</a>
 - <a href="#using">Using</a>
@@ -10,6 +14,13 @@
 # IMPORTANT - Forked Repository Notice <a name="notice"></a>
 This forked repository is highly experimental, highly verbose, and should not be considered
 official in any capacity.
+
+## Hey this looks legit <a name="legit"></a>
+
+It is **EXTREMELY NOT**. This data is the result of sleuthing and sniffing around personally; @cybik (the author of the Eluktronics integration at this time) is not related to Eluktronics in any way,
+and only owns hardware sold by Eluktronics.
+
+I repeat: this work is completely unrelated to Eluktronics, and is a fully user/developer-driven, external development effort. There is no claim of anything being "official".
 
 ## What are you doing here? <a name="nani"></a>
 This repository fork uses upstream's clevo_wmi code as a jumping point to start poking at hooking
@@ -53,7 +64,7 @@ Additional modules not related to Tuxedo products:
 
 Use either method only. Do not combine installation methods, such as starting with the build step below and proceeding to use the same build artifacts with the DKMS module. Otherwise the module built via dkms will fail to load with an `exec_format` error on newer kernels due to a mismatched version magic.
 
-This is why the DKMS build step begins with a `make clean` step. 
+This is why the DKMS build step begins with a `make clean` step.
 
 For convenience, on platforms where DKMS is in use, skip to the DKMS section directly.
 
@@ -135,9 +146,9 @@ Default Parameters at start.
 In this example, we start the kernel module with the following settings:
 
 - mode 0 (Custom / Default Mode)
-- red color for the left side of keyboard 
-- green color for the center of keyboard 
-- blue color for the right side of keyboard 
+- red color for the left side of keyboard
+- green color for the center of keyboard
+- blue color for the right side of keyboard
 
 Note that we write it's settings to a `.conf` file under `/etc/modprobe.d` named `tuxedo_keyboard.conf`.
 

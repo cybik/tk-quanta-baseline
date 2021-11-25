@@ -1,9 +1,30 @@
 /*!
- * Copyright (c) 2021 Renaud Lepage <root@cybikbase.com>
+ * Copyright (c) 2021 TUXEDO Computers GmbH <tux@tuxedocomputers.com>
+ * Parts of this file Copyright (c) 2021 Renaud Lepage <root@cybikbase.com>
  *
- * This file is inspired by tuxedo-keyboard, copyright (c) 2021 TUXEDO Computers.
+ * This file is part of eluk-wmi, an offshoot of tuxedo-keyboard, and heavily
+ * modified to be nigh unrecognizable from the original. Notices will be
+ * preserved per the spirit of Open Source development.
+ ***************************************************************************
+ * Modified Source Notice:
+ * 
+ * eluk-wmi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * tk-quanta-baseline is free software: you can redistribute it and/or modify
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ ***************************************************************************
+ * Original Notice:
+ * 
+ * tuxedo-keyboard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.

@@ -78,5 +78,84 @@
 
 //#define ELUK_DEBUGGING 1
 
+typedef void (eluk_led_evt_cb_int_t)(u32);
+typedef void (eluk_led_evt_cb_buf_t)(u8, u8*);
+
+struct eluk_led_interface_t {
+    char *string_id;
+    eluk_led_evt_cb_int_t *evt_cb_int;
+    eluk_led_evt_cb_buf_t *evt_cb_buf;
+};
+
+u32 eluk_led_add_interface(const char* name, struct eluk_led_interface_t *new_interface);
+u32 eluk_led_remove_interface(const char* name, struct eluk_led_interface_t *interface);
+u32 eluk_led_get_active_interface_id(char **id_str);
+
+static struct eluk_led_interfaces_t {
+    struct eluk_led_interface_t *wmi;
+} eluk_led_interfaces = { .wmi = NULL };
+
+eluk_led_evt_cb_int_t eluk_led_evt_cb_int;
+eluk_led_evt_cb_buf_t eluk_led_evt_cb_buf;
+
+
+static DEFINE_MUTEX(eluk_led_interface_modification_lock);
+
+u32 eluk_led_add_interface(const char* interface_name,
+                         struct eluk_led_interface_t *interface)
+{
+    mutex_lock(&eluk_led_interface_modification_lock);
+
+    if (strcmp(interface->string_id, interface_name) == 0) {
+        eluk_led_interfaces.wmi = interface;
+    } else {
+        TUXEDO_DEBUG("trying to add unknown interface\n");
+        mutex_unlock(&eluk_led_interface_modification_lock);
+        return -EINVAL;
+    }
+    interface->evt_cb_int = eluk_led_evt_cb_int;
+    interface->evt_cb_buf = eluk_led_evt_cb_buf;
+
+    mutex_unlock(&eluk_led_interface_modification_lock);
+
+    return 0;
+}
+EXPORT_SYMBOL(eluk_led_add_interface);
+
+u32 eluk_led_remove_interface(const char* interface_name, 
+                            struct eluk_led_interface_t *interface)
+{
+    mutex_lock(&eluk_led_interface_modification_lock);
+
+    if (strcmp(interface->string_id, interface_name) == 0) {
+        eluk_led_interfaces.wmi = NULL;
+    } else {
+        mutex_unlock(&eluk_led_interface_modification_lock);
+        return -EINVAL;
+    }
+
+    mutex_unlock(&eluk_led_interface_modification_lock);
+
+    return 0;
+}
+EXPORT_SYMBOL(eluk_led_remove_interface);
+
+u32 eluk_led_get_active_interface_id(char **id_str)
+{
+    if (IS_ERR_OR_NULL(eluk_led_interfaces.wmi))
+        return -ENODEV;
+
+    if (!IS_ERR_OR_NULL(id_str))
+        *id_str = eluk_led_interfaces.wmi->string_id;
+
+    return 0;
+}
+EXPORT_SYMBOL(eluk_led_get_active_interface_id);
+
+void eluk_led_evt_cb_int(u32 code)
+{
+    // NOOP
+}
+
 
 #endif

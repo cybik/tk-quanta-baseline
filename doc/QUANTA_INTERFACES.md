@@ -1,6 +1,6 @@
 # Eluktronics Prometheus XVI data
 
-The following information is what the `quanta_interfaces.h` and `eluk-*` files are basing themselves on to
+The following information is what the `eluk_led_interfaces.h` and `eluk-*` files are basing themselves on to
 attempt interaction with the WMI interface. This has been documented as a reference point.
 
 ## Hey this looks legit

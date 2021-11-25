@@ -88,7 +88,7 @@ static int eluk_led_wmi_colors_commit_all(char *, const struct kernel_param *);
 
 //DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
-struct quanta_interface_t eluk_led_wmi_iface = {
+struct eluk_led_interface_t eluk_led_wmi_iface = {
     .string_id = ELUK_LED_IFACE_WMI_STRID,
 };
 
@@ -111,7 +111,7 @@ static void eluk_led_wmi_run_query(void)
         pr_debug("qnwmi:   WMI data :: type %d\n", out_acpi->type);
         if(out_acpi->type == ACPI_TYPE_BUFFER) {
             pr_debug("qnwmi:    WMI data :: type %d :: length %d\n", out_acpi->buffer.type, out_acpi->buffer.length);
-            quanta_evt_cb_buf(out_acpi->buffer.length, out_acpi->buffer.pointer);
+            eluk_led_evt_cb_buf(out_acpi->buffer.length, out_acpi->buffer.pointer);
         }
         kfree(out_acpi);
     } else {
@@ -138,7 +138,7 @@ static int eluk_led_wmi_probe(struct wmi_device *wdev, const void *dummy_context
         return -ENODEV;
     }
 
-    quanta_add_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
+    eluk_led_add_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
 
 #if defined(ELUK_DEBUGGING)
     pr_info("probe: Generic Quanta interface initialized\n");
@@ -155,7 +155,7 @@ static int  eluk_led_wmi_remove(struct wmi_device *wdev)
 static void eluk_led_wmi_remove(struct wmi_device *wdev)
 #endif
 {
-    quanta_remove_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
+    eluk_led_remove_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
 #if defined(ELUK_DEBUGGING)
     pr_debug("Quanta/Eluk Driver removed. peace out.\n");
 #endif
@@ -213,7 +213,7 @@ static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 #endif
 }
 
-void quanta_evt_cb_buf(u8 b_l, u8* b_ptr)
+void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
 {
     // todo: find a way to make this useful?
 #if defined(ELUK_DEBUGGING)

@@ -37,8 +37,8 @@
 
 #define ELUK_WMI_LED_ZONE_LOGO    0x0008 // FIXME: doesn't do anything on Eluktronics. Probably for screen-light stuff? like models with cute designs on the back of the screen 
 #define ELUK_WMI_LED_ZONE_TRUNK   0x0007 // TODO : actually do this blasted thing
-#define ELUK_WMI_LED_ZONE_LEFT    0x0003
+#define ELUK_WMI_LED_ZONE_LEFT    0x0005
 #define ELUK_WMI_LED_ZONE_CENTRE  0x0004
-#define ELUK_WMI_LED_ZONE_RIGHT   0x0005
+#define ELUK_WMI_LED_ZONE_RIGHT   0x0003
 
 #endif

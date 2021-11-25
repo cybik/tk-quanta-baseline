@@ -36,14 +36,14 @@
 #define ELUK_LED_IFACE_WMI_STRID "eluk-led-wmi"
 
 // Zones
-#define ELUK_WMI_LED_ZONE_LOGO    0x0008 // FIXME: Unused on Eluktronics.
-#define ELUK_WMI_LED_ZONE_TRUNK   0x0007 // TODO : actually do this thing
-#define ELUK_WMI_LED_ZONE_LEFT    0x0005
-#define ELUK_WMI_LED_ZONE_CENTRE  0x0004
-#define ELUK_WMI_LED_ZONE_RIGHT   0x0003
+#define ELUK_WMI_LED_ZONE_LOGO            0x08 // FIX : Unused on Eluktronics
+#define ELUK_WMI_LED_ZONE_TRUNK           0x07
+#define ELUK_WMI_LED_ZONE_LEFT            0x05
+#define ELUK_WMI_LED_ZONE_CENTRE          0x04
+#define ELUK_WMI_LED_ZONE_RIGHT           0x03
 
 // Known effect/brightness Settings ("alpha" channels)
-#define ELUK_WMI_LED_BREF_SOLID_OFF       0x00 // 0? not -1? eh.
+#define ELUK_WMI_LED_BREF_SOLID_OFF       0x00 // 0? not -1? eh. validated.
 #define ELUK_WMI_LED_BREF_SOLID_HALF      0x11 // valid for trunk also
 #define ELUK_WMI_LED_BREF_SOLID_FULL      0x12 // valid for trunk also
 
@@ -63,5 +63,39 @@
 #define ELUK_WMI_LED_BREF_AMBILIGHT_FULL  0x72
 
 //#define ELUK_WMI_LED_BREF_
+
+// Baselines / Defaults.
+//  a2: zone; a3: color
+union wmi_setting solid_50_union[5] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x110022FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x110000FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x1100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x11FF0000, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+};
+
+union wmi_setting solid_100_union[5] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x120022FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x120000FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x1200FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x12FF0000, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+};
+
+union wmi_setting breathing_50_union[5] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x310022FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x310000FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x31FF0000, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+};
+
+union wmi_setting breathing_100_union[5] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x320022FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x320000FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3200FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x32FF0000, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+};
 
 #endif

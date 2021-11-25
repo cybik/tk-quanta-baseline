@@ -65,31 +65,6 @@ static uint eluk_kbd_right_alpha = 0x12; // Default: 100%
 
 // Baseline unions for now.
 
-// a2: zone; a3: color
-union wmi_setting baseline_solid_union[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x3000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x110006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x1100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x11FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
-};
-
-union wmi_setting baseline_breathing_50_union[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x310006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x31FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
-};
-
-union wmi_setting baseline_breathing_100_union[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x3000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x320006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3200FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x32FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
-};
-
 DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
 struct quanta_interface_t eluk_led_wmi_iface = {
@@ -261,30 +236,24 @@ static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
     return (failed?1:0);
 }
 
-static int eluk_led_wmi_set_value(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_rgb_solid_50(const char *val, const struct kernel_param *kp)
 {
-    char valcp[16];
-    char *s;
-    int selected_preset = 0;
-    union wmi_setting *selected_preset_ptr = baseline_solid_union;
+    return eluk_led_wmi_set_value_exec(solid_50_union, 5);
+}
 
-    strncpy(valcp, val, 16);
-    valcp[15] = '\0';
+static int eluk_led_wmi_rgb_solid_100(const char *val, const struct kernel_param *kp)
+{
+    return eluk_led_wmi_set_value_exec(solid_100_union, 5);
+}
 
-    s = strstrip(valcp);
-    
-    if(strlen(s) > 0 && strlen(s) == 1) {
-        if((selected_preset = s[0] - '0') > 2) {
-            selected_preset = 0;
-        }
-        if(selected_preset == 1) {
-            selected_preset_ptr = baseline_breathing_50_union;
-        } else if(selected_preset == 2) {
-            selected_preset_ptr = baseline_breathing_100_union;
-        }
-    }
+static int eluk_led_wmi_rgb_breathing_50(const char *val, const struct kernel_param *kp)
+{
+    return eluk_led_wmi_set_value_exec(breathing_50_union, 5);
+}
 
-    return eluk_led_wmi_set_value_exec(selected_preset_ptr, 5);
+static int eluk_led_wmi_rgb_breathing_100(const char *val, const struct kernel_param *kp)
+{
+    return eluk_led_wmi_set_value_exec(breathing_100_union, 5);
 }
 
 static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp)
@@ -354,18 +323,40 @@ module_wmi_driver(eluk_led_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on TUXEDO code");
-MODULE_VERSION("0.0.1");
+MODULE_VERSION("0.0.2");
 MODULE_LICENSE("GPL");
 
-
-static const struct kernel_param_ops eluk_preset_ops = {
-    .set    = eluk_led_wmi_set_value,
+// section: preset ops
+static const struct kernel_param_ops eluk_preset_rgb_solid_50_ops = {
+    .set    = eluk_led_wmi_rgb_solid_50,
     .get    = NULL,
 };
-module_param_cb(eluk_preset, &eluk_preset_ops, NULL, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_preset, "Trigger testing. Read and Write.");
+module_param_cb(eluk_preset_rgb_solid_50, &eluk_preset_rgb_solid_50_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_preset_rgb_solid_50, "Trigger testing. Read and Write.");
+ 
+static const struct kernel_param_ops eluk_preset_rgb_solid_100_ops = {
+    .set    = eluk_led_wmi_rgb_solid_100,
+    .get    = NULL,
+};
+module_param_cb(eluk_preset_rgb_solid_100, &eluk_preset_rgb_solid_100_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_preset_rgb_solid_100, "Trigger testing. Read and Write.");
 
-// Color setting
+static const struct kernel_param_ops eluk_preset_rgb_breathing_50_ops = {
+    .set    = eluk_led_wmi_rgb_breathing_50,
+    .get    = NULL,
+};
+module_param_cb(eluk_preset_rgb_breathing_50, &eluk_preset_rgb_breathing_50_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_preset_rgb_breathing_50, "Trigger testing. Read and Write.");
+ 
+static const struct kernel_param_ops eluk_preset_rgb_breathing_100_ops = {
+    .set    = eluk_led_wmi_rgb_breathing_100,
+    .get    = NULL,
+};
+module_param_cb(eluk_preset_rgb_breathing_100, &eluk_preset_rgb_breathing_100_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_preset_rgb_breathing_100, "Trigger testing. Read and Write.");
+// endsection: preset ops
+
+// section: Zone Colors
 module_param(eluk_kbd_logo_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_logo_color, "Color for the Logo.");
 
@@ -380,8 +371,10 @@ MODULE_PARM_DESC(eluk_kbd_cntr_color, "Color for the Center.");
 
 module_param(eluk_kbd_right_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_right_color, "Color for the Right.");
+// endsection: Zone Colors
 
-// Effect / Brightness setting (combined, unfortunately)
+
+// section: Effect/Brightness Setting
 // TODO: can these be made smaller my lord.
 module_param(eluk_kbd_logo_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_logo_alpha, "Effect / Brightness for the Logo.");
@@ -397,7 +390,10 @@ MODULE_PARM_DESC(eluk_kbd_cntr_alpha, "Effect / Brightness for the Center.");
 
 module_param(eluk_kbd_right_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_right_alpha, "Effect / Brightness for the Right.");
+// endsection: Effect/Brightness Setting
 
+
+// section: commit ops
 static const struct kernel_param_ops eluk_commit_all_ops = {
     .set    = eluk_led_wmi_colors_commit_all,
     .get    = NULL,
@@ -426,6 +422,7 @@ static const struct kernel_param_ops eluk_commit_logo_ops = {
 };
 module_param_cb(eluk_kbd_commit_logo, &eluk_commit_logo_ops, NULL, S_IWUSR | S_IWGRP  );
 MODULE_PARM_DESC(eluk_kbd_commit_logo, "Commit logo colors and mode setup to WMI.");
+// endsection: commit ops
 
 MODULE_DEVICE_TABLE(wmi, eluk_led_wmi_device_ids);
 MODULE_ALIAS_ELUK_LED_WMI();

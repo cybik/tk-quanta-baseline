@@ -302,7 +302,7 @@ static int eluk_led_wmi_rgb_breathing_100(const char *val, const struct kernel_p
 static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
-    union wmi_setting create_struct[5] = {
+    union wmi_setting settings[5] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
         .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_set_logo_alpha  << 24) + eluk_kbd_rgb_set_logo_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
@@ -330,13 +330,13 @@ static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_p
         return 0;
     }
 #endif
-    return eluk_led_wmi_set_value_exec(create_struct, 5);
+    return eluk_led_wmi_set_value_exec(settings, 5);
 }
 
 static int eluk_led_wmi_colors_commit_kbd(const char *val, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
-    union wmi_setting create_struct[3] = {
+    union wmi_setting settings[3] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
         .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_set_right_alpha  << 24) + eluk_kbd_rgb_set_right_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
@@ -347,29 +347,29 @@ static int eluk_led_wmi_colors_commit_kbd(const char *val, const struct kernel_p
         .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_set_left_alpha << 24) + eluk_kbd_rgb_set_left_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     };
-    return eluk_led_wmi_set_value_exec(create_struct, 3);
+    return eluk_led_wmi_set_value_exec(settings, 3);
 }
 
 static int eluk_led_wmi_colors_commit_trunk(const char *val, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
-    union wmi_setting create_struct[1] = {
+    union wmi_setting settings[1] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
         .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_set_trunk_alpha << 24) + eluk_kbd_rgb_set_trunk_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
     };
-    return eluk_led_wmi_set_value_exec(create_struct, 1);
+    return eluk_led_wmi_set_value_exec(settings, 1);
 }
 
 static int eluk_led_wmi_colors_commit_logo(const char *val, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
-    union wmi_setting create_struct[1] = {
+    union wmi_setting settings[1] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
         .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_set_logo_alpha  << 24) + eluk_kbd_rgb_set_logo_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
     };
-    return eluk_led_wmi_set_value_exec(create_struct, 1);
+    return eluk_led_wmi_set_value_exec(settings, 1);
 }
 
 module_wmi_driver(eluk_led_wmi_driver);

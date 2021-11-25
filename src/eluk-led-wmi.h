@@ -57,31 +57,11 @@
 #define ELUK_LED_IFACE_WMI_STRID "eluk-led-wmi"
 
 // Zones
-#define ELUK_WMI_LED_ZONE_LOGO            0x08 // FIX : Unused on Eluktronics
-#define ELUK_WMI_LED_ZONE_TRUNK           0x07
-#define ELUK_WMI_LED_ZONE_LEFT            0x05
-#define ELUK_WMI_LED_ZONE_CENTRE          0x04
-#define ELUK_WMI_LED_ZONE_RIGHT           0x03
-
-// Known effect/brightness Settings ("alpha" channels)
-#define ELUK_WMI_LED_BREF_SOLID_OFF       0x10 // 0? not -1? eh. validated.
-#define ELUK_WMI_LED_BREF_SOLID_HALF      0x11 // valid for trunk also
-#define ELUK_WMI_LED_BREF_SOLID_FULL      0x12 // valid for trunk also
-
-// Soothing breathing pattern
-#define ELUK_WMI_LED_BREF_BREATHING_OFF   0x30 //?
-#define ELUK_WMI_LED_BREF_BREATHING_HALF  0x31
-#define ELUK_WMI_LED_BREF_BREATHING_FULL  0x32
-
-// Reminescent of the rainbow road! (Known as Colorful Cycle)
-#define ELUK_WMI_LED_BREF_RAINBOW_OFF     0x60
-#define ELUK_WMI_LED_BREF_RAINBOW_HALF    0x61
-#define ELUK_WMI_LED_BREF_RAINBOW_FULL    0x62
-
-// AMBILIGHT IS ONLY FOR THE KEYBOARD.
-#define ELUK_WMI_LED_BREF_AMBILIGHT_OFF   0x70
-#define ELUK_WMI_LED_BREF_AMBILIGHT_HALF  0x71
-#define ELUK_WMI_LED_BREF_AMBILIGHT_FULL  0x72
+#define ELUK_WMI_LED_ZONE_LOGO             0x8 // FIX : Unused on Eluktronics
+#define ELUK_WMI_LED_ZONE_TRUNK            0x7
+#define ELUK_WMI_LED_ZONE_LEFT             0x5
+#define ELUK_WMI_LED_ZONE_CENTRE           0x4
+#define ELUK_WMI_LED_ZONE_RIGHT            0x3
 
 // Off/Half/Full
 #define ELUK_WMI_LED_BRIGHT_NONE           0x0

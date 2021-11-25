@@ -111,24 +111,6 @@ u32 quanta_add_interface(const char* name, struct quanta_interface_t *new_interf
 u32 quanta_remove_interface(const char* name, struct quanta_interface_t *interface);
 u32 quanta_get_active_interface_id(char **id_str);
 
-union qnt_ec_read_return {
-    u32 dword;
-    struct {
-        u8 data_low;
-        u8 data_high;
-    } bytes;
-};
-
-union qnt_ec_write_return {
-    u32 dword;
-    struct {
-        u8 addr_low;
-        u8 addr_high;
-        u8 data_low;
-        u8 data_high;
-    } bytes;
-};
-
 static struct quanta_interfaces_t {
     struct quanta_interface_t *wmi;
 } quanta_interfaces = { .wmi = NULL };

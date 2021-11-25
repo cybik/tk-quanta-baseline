@@ -70,7 +70,7 @@
     MODULE_ALIAS("wmi:" QUANTA_WMI_EVNT_GUID_MESG_MNTR);
 */
 
-// Please refer to the eluk_led_interfaces.md document for information on the magicks.
+// Please refer to the QUANTA_INTERFACES.md document for information on the magicks.
 
 #define QUANTA_WMI_MAGIC_GET_OP              0xFA00 // 64000
 #define QUANTA_WMI_MAGIC_GET_ARG_LEDS        0x0100 //   256

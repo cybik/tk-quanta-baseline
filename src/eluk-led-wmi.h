@@ -66,6 +66,14 @@
 
 // Baselines / Defaults.
 //  a2: zone; a3: color
+union wmi_setting offline_union[5] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x0000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x0000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x000000FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x0000FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x00FF0000, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+};
+
 union wmi_setting solid_50_union[5] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x110022FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?

@@ -29,7 +29,7 @@ for the keyboard and fan LEDs.
 
 ## Why tho <a name="doushite"></a>
 Literally the only thing that's "not working" on this laptop is LED controls. Everything else just
-worked out of the box after upgrading the laptop to 5.15. --@cybik
+worked out of the box after upgrading the kernel to 5.15. --@cybik
 
 # Description <a name="description"></a>
 TUXEDO Computers kernel module drivers for keyboard, keyboard backlight & general hardware I/O

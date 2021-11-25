@@ -37,8 +37,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this software.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef eluk_led_interfaces_H
-#define eluk_led_interfaces_H
+#ifndef QUANTA_INTERFACES_H
+#define QUANTA_INTERFACES_H
 
 #include <linux/types.h>
 

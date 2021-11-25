@@ -57,7 +57,7 @@
 #define QUANTA_WMI_MAGIC_GET_ARG_BIOS_VER    0x0201 //   513
 
 #define QUANTA_WMI_MAGIC_SET_OP              0xFB00 // 64256
-#define QUANTA_WMI_MAGIC_SET_ARG_PRETTY      0x0100 //   256
+#define QUANTA_WMI_MAGIC_SET_ARG_LED      0x0100 //   256
 #define QUANTA_WMI_MAGIC_SET_ARG_WIN_KEY     0x0200 //   512
 #define QUANTA_WMI_MAGIC_SET_ARG_PWR_MODE    0x0300 //   768
 
@@ -77,13 +77,13 @@ union wmi_setting {
 };
 
 
-typedef void (quanta_event_callb_int_t)(u32);
-typedef void (quanta_event_callb_buf_t)(u8, u8*);
+typedef void (quanta_evt_cb_int_t)(u32);
+typedef void (quanta_evt_cb_buf_t)(u8, u8*);
 
 struct quanta_interface_t {
     char *string_id;
-    quanta_event_callb_int_t *event_callb_int;
-    quanta_event_callb_buf_t *event_callb_buf;
+    quanta_evt_cb_int_t *evt_cb_int;
+    quanta_evt_cb_buf_t *evt_cb_buf;
 };
 
 u32 quanta_add_interface(const char* name, struct quanta_interface_t *new_interface);
@@ -112,8 +112,8 @@ static struct quanta_interfaces_t {
     struct quanta_interface_t *wmi;
 } quanta_interfaces = { .wmi = NULL };
 
-quanta_event_callb_int_t quanta_event_callb_int;
-quanta_event_callb_buf_t quanta_event_callb_buf;
+quanta_evt_cb_int_t quanta_evt_cb_int;
+quanta_evt_cb_buf_t quanta_evt_cb_buf;
 
 
 static DEFINE_MUTEX(quanta_interface_modification_lock);
@@ -130,8 +130,8 @@ u32 quanta_add_interface(const char* interface_name,
         mutex_unlock(&quanta_interface_modification_lock);
         return -EINVAL;
     }
-    interface->event_callb_int = quanta_event_callb_int;
-    interface->event_callb_buf = quanta_event_callb_buf;
+    interface->evt_cb_int = quanta_evt_cb_int;
+    interface->evt_cb_buf = quanta_evt_cb_buf;
 
     mutex_unlock(&quanta_interface_modification_lock);
 
@@ -169,7 +169,7 @@ u32 quanta_get_active_interface_id(char **id_str)
 }
 EXPORT_SYMBOL(quanta_get_active_interface_id);
 
-void quanta_event_callb_int(u32 code)
+void quanta_evt_cb_int(u32 code)
 {
     // NOOP
 }

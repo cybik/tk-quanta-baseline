@@ -22,7 +22,7 @@
 #include "quanta_interfaces.h"
 
 
-// This WMI ID should be the conduit to write to ACPI_SMI, and read from it as well, 
+// This WMI ID should be the conduit to read and write to ACPI_SMI,
 //  via wmi_set_block/wmi_query_block.
 #define ELUK_WMI_MGMT_GUID_LED_RD_WR  "644C5791-B7B0-4123-A90B-E93876E0DAAD"
 
@@ -33,12 +33,35 @@
     MODULE_ALIAS("wmi:" ELUK_WMI_MGMT_GUID_LED_RD_WR); \
     MODULE_ALIAS("wmi:" ELUK_WMI_EVNT_GUID_MESG_MNTR);
 
-#define ELUK_LED_INTERFACE_WMI_STRID "eluk-led-wmi"
+#define ELUK_LED_IFACE_WMI_STRID "eluk-led-wmi"
 
-#define ELUK_WMI_LED_ZONE_LOGO    0x0008 // FIXME: doesn't do anything on Eluktronics. Probably for screen-light stuff? like models with cute designs on the back of the screen 
-#define ELUK_WMI_LED_ZONE_TRUNK   0x0007 // TODO : actually do this blasted thing
+// Zones
+#define ELUK_WMI_LED_ZONE_LOGO    0x0008 // FIXME: Unused on Eluktronics.
+#define ELUK_WMI_LED_ZONE_TRUNK   0x0007 // TODO : actually do this thing
 #define ELUK_WMI_LED_ZONE_LEFT    0x0005
 #define ELUK_WMI_LED_ZONE_CENTRE  0x0004
 #define ELUK_WMI_LED_ZONE_RIGHT   0x0003
+
+// Known effect/brightness Settings ("alpha" channels)
+#define ELUK_WMI_LED_BREF_SOLID_OFF       0x00 // 0? not -1? eh.
+#define ELUK_WMI_LED_BREF_SOLID_HALF      0x11 // valid for trunk also
+#define ELUK_WMI_LED_BREF_SOLID_FULL      0x12 // valid for trunk also
+
+// Soothing breathing pattern
+#define ELUK_WMI_LED_BREF_BREATHING_OFF   0x30 //?
+#define ELUK_WMI_LED_BREF_BREATHING_HALF  0x31
+#define ELUK_WMI_LED_BREF_BREATHING_FULL  0x32
+
+// Reminescent of the rainbow road! (Known as Colorful Cycle)
+#define ELUK_WMI_LED_BREF_RAINBOW_OFF     0x60
+#define ELUK_WMI_LED_BREF_RAINBOW_HALF    0x61
+#define ELUK_WMI_LED_BREF_RAINBOW_FULL    0x62
+
+// AMBILIGHT IS ONLY FOR THE KEYBOARD.
+#define ELUK_WMI_LED_BREF_AMBILIGHT_OFF   0x70
+#define ELUK_WMI_LED_BREF_AMBILIGHT_HALF  0x71
+#define ELUK_WMI_LED_BREF_AMBILIGHT_FULL  0x72
+
+//#define ELUK_WMI_LED_BREF_
 
 #endif

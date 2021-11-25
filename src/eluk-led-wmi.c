@@ -67,33 +67,33 @@ static uint eluk_kbd_right_alpha = 0x12; // Default: 100%
 
 // a2: zone; a3: color
 union wmi_setting baseline_solid_union[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x3000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x110006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x1100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x11FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x3000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x110006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x1100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x11FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
 };
 
 union wmi_setting baseline_breathing_50_union[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x310006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x31FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x310006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3100FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x31FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
 };
 
 union wmi_setting baseline_breathing_100_union[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x3000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x320006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3200FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x32FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = 0x1000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = 0x3000FFFF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = 0x320006FF, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = 0x3200FF00, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = 0x32FF1500, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
 };
 
 DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
-struct quanta_interface_t eluk_led_wmi_interface = {
-    .string_id = ELUK_LED_INTERFACE_WMI_STRID,
+struct quanta_interface_t eluk_led_wmi_iface = {
+    .string_id = ELUK_LED_IFACE_WMI_STRID,
 };
 
 static void eluk_led_wmi_run_query(void)
@@ -115,7 +115,7 @@ static void eluk_led_wmi_run_query(void)
         if(out_acpi->type == ACPI_TYPE_BUFFER) {
             pr_debug("qnwmi:    WMI data :: type %d :: length %d\n", out_acpi->buffer.type, out_acpi->buffer.length);
 #if 0
-            quanta_event_callb_buf(out_acpi->buffer.length, out_acpi->buffer.pointer);
+            quanta_evt_cb_buf(out_acpi->buffer.length, out_acpi->buffer.pointer);
 #endif
         }
         kfree(out_acpi);
@@ -142,7 +142,7 @@ static int eluk_led_wmi_probe(struct wmi_device *wdev, const void *dummy_context
         return -ENODEV;
     }
 
-    quanta_add_interface(ELUK_LED_INTERFACE_WMI_STRID, &eluk_led_wmi_interface);
+    quanta_add_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
 
     pr_info("probe: Generic Quanta interface initialized\n");
 
@@ -159,7 +159,7 @@ static void eluk_led_wmi_remove(struct wmi_device *wdev)
 #endif
 {
     pr_info("Driver removed. peace out.\n");
-    quanta_remove_interface(ELUK_LED_INTERFACE_WMI_STRID, &eluk_led_wmi_interface);
+    quanta_remove_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0)
     return 0;
 #endif
@@ -173,18 +173,18 @@ static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
     if (!obj) {
         pr_debug("expected ACPI object doesn't exist\n");
     } else if (obj->type == ACPI_TYPE_INTEGER) {
-        if (!IS_ERR_OR_NULL(eluk_led_wmi_interface.event_callb_int)) {
+        if (!IS_ERR_OR_NULL(eluk_led_wmi_iface.evt_cb_int)) {
             u32 code;
             code = obj->integer.value;
             // Execute registered callback
-            eluk_led_wmi_interface.event_callb_int(code);
+            eluk_led_wmi_iface.evt_cb_int(code);
         } else {
             pr_debug("no registered callback\n");
         }
     } else if (obj->type == ACPI_TYPE_BUFFER) {
-        if (!IS_ERR_OR_NULL(eluk_led_wmi_interface.event_callb_buf)) {
+        if (!IS_ERR_OR_NULL(eluk_led_wmi_iface.evt_cb_buf)) {
             // Execute registered callback
-            eluk_led_wmi_interface.event_callb_buf(obj->buffer.length, obj->buffer.pointer);
+            eluk_led_wmi_iface.evt_cb_buf(obj->buffer.length, obj->buffer.pointer);
         } else {
             pr_debug("no registered callback\n");
         }
@@ -193,9 +193,9 @@ static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
     }
 }
 
-void quanta_event_callb_buf(u8 b_l, u8* b_ptr)
+void quanta_evt_cb_buf(u8 b_l, u8* b_ptr)
 {
-	// todo: find a way to make this useful?
+    // todo: find a way to make this useful?
 #if 0
     u8 qnt_data[b_l];
     int i;
@@ -212,7 +212,7 @@ void quanta_event_callb_buf(u8 b_l, u8* b_ptr)
             ((i*8)+6)<b_l?qnt_data[(i*8)+6]:0, ((i*8)+7)<b_l?qnt_data[(i*8)+7]:0
         );
     }
-	#endif
+    #endif
 }
 
 static const struct wmi_device_id eluk_led_wmi_device_ids[] = {
@@ -226,7 +226,7 @@ static const struct wmi_device_id eluk_led_wmi_device_ids[] = {
 
 static struct wmi_driver eluk_led_wmi_driver = {
     .driver = {
-        .name    = ELUK_LED_INTERFACE_WMI_STRID,
+        .name    = ELUK_LED_IFACE_WMI_STRID,
         .owner   = THIS_MODULE
     },
     .id_table    = eluk_led_wmi_device_ids,
@@ -239,77 +239,115 @@ static struct wmi_driver eluk_led_wmi_driver = {
 #define RUN_THE_TEST
 #endif
 
-static int eluk_led_wmi_set_value_exec(union wmi_setting *preset) {
+static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
     struct acpi_buffer input;
     acpi_status status;
     int iter;
     bool failed = false;
 
-    for(iter = 0; ((iter < 5) && !failed); iter++) {
+    for(iter = 0; ((iter < count) && !failed); iter++) {
         pr_debug("Attempting to set LED colors via WMI.\n");
 
         input.length = (sizeof(u8)*32); // u8 array
         input.pointer = preset[iter].bytes;
         status = wmi_set_block(ELUK_WMI_MGMT_GUID_LED_RD_WR, 0, &input);
         if (ACPI_FAILURE(status)) {
-            pr_info("Write fail, meh. We're debugging at this point, reboot to windows to fix the state?\n");
+            pr_info("Write fail, meh. We're debugging at this point.\n");
+            pr_info("Reboot to windows to fix the state?\n");
             failed = true;
         }
-		// No need to read after; this module only sets and doesn't query.
+        // No need to read after; this module only sets and doesn't query.
     }
-	return (failed?1:0);
+    return (failed?1:0);
 }
 
 static int eluk_led_wmi_set_value(const char *val, const struct kernel_param *kp)
 {
     char valcp[16];
     char *s;
-	int selected_preset = 0;
-	union wmi_setting *selected_preset_ptr = baseline_solid_union;
+    int selected_preset = 0;
+    union wmi_setting *selected_preset_ptr = baseline_solid_union;
 
     strncpy(valcp, val, 16);
     valcp[15] = '\0';
 
     s = strstrip(valcp);
     
-	if(strlen(s) > 0 && strlen(s) == 1) {
-		if((selected_preset = s[0] - '0') > 2) {
-			selected_preset = 0;
-		}
-		if(selected_preset == 1) {
-			selected_preset_ptr = baseline_breathing_50_union;
-		} else if(selected_preset == 2) {
-			selected_preset_ptr = baseline_breathing_100_union;
-		}
-	}
+    if(strlen(s) > 0 && strlen(s) == 1) {
+        if((selected_preset = s[0] - '0') > 2) {
+            selected_preset = 0;
+        }
+        if(selected_preset == 1) {
+            selected_preset_ptr = baseline_breathing_50_union;
+        } else if(selected_preset == 2) {
+            selected_preset_ptr = baseline_breathing_100_union;
+        }
+    }
 
-    return eluk_led_wmi_set_value_exec(selected_preset_ptr);
+    return eluk_led_wmi_set_value_exec(selected_preset_ptr, 5);
 }
 
-static int eluk_led_wmi_colors_commit(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp)
 {
-	// If this is reached, launch commit. The input is not important.
-	union wmi_setting create_struct[5] = {
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LOGO,   .a3 = ((eluk_kbd_logo_alpha  << 24) + eluk_kbd_logo_color),
-		.a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // trunk/logo?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_TRUNK,  .a3 = ((eluk_kbd_trunk_alpha << 24) + eluk_kbd_trunk_color),
-		.a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // logo/trunk?
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_RIGHT,  .a3 = ((eluk_kbd_right_alpha  << 24) + eluk_kbd_right_color),
-		.a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led3 - right
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_CENTRE, .a3 = ((eluk_kbd_cntr_alpha  << 24) + eluk_kbd_cntr_color),
-		.a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led2 - centre
-    {.a0_op = QUANTA_WMI_MAGIC_SET_OP, .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_PRETTY, .a2 = ELUK_WMI_LED_ZONE_LEFT,   .a3 = ((eluk_kbd_left_alpha << 24) + eluk_kbd_left_color),
-		.a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, // led1 - left
-	};
-	/*
-	quanta_event_callb_buf(32, create_struct[0].bytes);
-	quanta_event_callb_buf(32, create_struct[1].bytes);
-	quanta_event_callb_buf(32, create_struct[2].bytes);
-	quanta_event_callb_buf(32, create_struct[3].bytes);
-	quanta_event_callb_buf(32, create_struct[4].bytes);
-	*/
+    // If this is reached, launch commit. The input is not important.
+    union wmi_setting create_struct[5] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
+        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_logo_alpha  << 24) + eluk_kbd_logo_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
+        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_trunk_alpha << 24) + eluk_kbd_trunk_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
+        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_right_alpha  << 24) + eluk_kbd_right_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led2 - centre
+        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_cntr_alpha  << 24) + eluk_kbd_cntr_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led1 - left
+        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_left_alpha << 24) + eluk_kbd_left_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, 
+    };
     
-	return eluk_led_wmi_set_value_exec(create_struct); // todo: actually implement lol
+    return eluk_led_wmi_set_value_exec(create_struct, 5);
+}
+
+static int eluk_led_wmi_colors_commit_kbd(const char *val, const struct kernel_param *kp)
+{
+    // If this is reached, launch commit. The input is not important.
+    union wmi_setting create_struct[3] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
+        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_right_alpha  << 24) + eluk_kbd_right_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led2 - centre
+        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_cntr_alpha  << 24) + eluk_kbd_cntr_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led1 - left
+        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_left_alpha << 24) + eluk_kbd_left_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
+    };
+    return eluk_led_wmi_set_value_exec(create_struct, 3);
+}
+
+static int eluk_led_wmi_colors_commit_trunk(const char *val, const struct kernel_param *kp)
+{
+    // If this is reached, launch commit. The input is not important.
+    union wmi_setting create_struct[1] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
+        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_trunk_alpha << 24) + eluk_kbd_trunk_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
+    };
+    return eluk_led_wmi_set_value_exec(create_struct, 1);
+}
+
+static int eluk_led_wmi_colors_commit_logo(const char *val, const struct kernel_param *kp)
+{
+    // If this is reached, launch commit. The input is not important.
+    union wmi_setting create_struct[1] = {
+    {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
+        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_logo_alpha  << 24) + eluk_kbd_logo_color),
+        .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
+    };
+    return eluk_led_wmi_set_value_exec(create_struct, 1);
 }
 
 module_wmi_driver(eluk_led_wmi_driver);
@@ -324,48 +362,70 @@ static const struct kernel_param_ops eluk_preset_ops = {
     .set    = eluk_led_wmi_set_value,
     .get    = NULL,
 };
-module_param_cb(eluk_preset, &eluk_preset_ops, NULL, S_IWUSR);
+module_param_cb(eluk_preset, &eluk_preset_ops, NULL, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_preset, "Trigger testing. Read and Write.");
 
 // Color setting
-module_param(eluk_kbd_logo_color, uint, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_logo_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_logo_color, "Color for the Logo.");
 
-module_param(eluk_kbd_trunk_color, uint, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_trunk_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_trunk_color, "Color for the Trunk.");
 
-module_param(eluk_kbd_left_color, uint, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_left_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_left_color, "Color for the Left.");
 
-module_param(eluk_kbd_cntr_color, uint, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_cntr_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_cntr_color, "Color for the Center.");
 
-module_param(eluk_kbd_right_color, uint, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_right_color, uint, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_right_color, "Color for the Right.");
 
 // Effect / Brightness setting (combined, unfortunately)
 // TODO: can these be made smaller my lord.
-module_param(eluk_kbd_logo_alpha, int, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_logo_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_logo_alpha, "Effect / Brightness for the Logo.");
 
-module_param(eluk_kbd_trunk_alpha, int, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_trunk_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_trunk_alpha, "Effect / Brightness for the Trunk.");
 
-module_param(eluk_kbd_left_alpha, int, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_left_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_left_alpha, "Effect / Brightness for the Left.");
 
-module_param(eluk_kbd_cntr_alpha, int, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_cntr_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_cntr_alpha, "Effect / Brightness for the Center.");
 
-module_param(eluk_kbd_right_alpha, int, S_IWUSR | S_IWGRP);
+module_param(eluk_kbd_right_alpha, int, S_IWUSR | S_IWGRP );
 MODULE_PARM_DESC(eluk_kbd_right_alpha, "Effect / Brightness for the Right.");
 
-static const struct kernel_param_ops eluk_commit_ops = {
-    .set    = eluk_led_wmi_colors_commit,
+static const struct kernel_param_ops eluk_commit_all_ops = {
+    .set    = eluk_led_wmi_colors_commit_all,
     .get    = NULL,
 };
-module_param_cb(eluk_kbd_commit, &eluk_commit_ops, NULL, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
-MODULE_PARM_DESC(eluk_kbd_commit, "Commit colors and mode setup to WMI.");
+module_param_cb(eluk_kbd_commit_all, &eluk_commit_all_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_commit_all, "Commit all colors and mode setup to WMI.");
+
+static const struct kernel_param_ops eluk_commit_kbd_ops = {
+    .set    = eluk_led_wmi_colors_commit_kbd,
+    .get    = NULL,
+};
+module_param_cb(eluk_kbd_commit_kbd, &eluk_commit_kbd_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_commit_kbd, "Commit keyboard colors and mode setup to WMI.");
+
+static const struct kernel_param_ops eluk_commit_trunk_ops = {
+    .set    = eluk_led_wmi_colors_commit_trunk,
+    .get    = NULL,
+};
+module_param_cb(eluk_kbd_commit_trunk, &eluk_commit_trunk_ops, NULL, S_IWUSR | S_IWGRP );
+MODULE_PARM_DESC(eluk_kbd_commit_trunk, "Commit trunk colors and mode setup to WMI.");
+
+// Unused on Eluktronics
+static const struct kernel_param_ops eluk_commit_logo_ops = {
+    .set    = eluk_led_wmi_colors_commit_logo,
+    .get    = NULL,
+};
+module_param_cb(eluk_kbd_commit_logo, &eluk_commit_logo_ops, NULL, S_IWUSR | S_IWGRP  );
+MODULE_PARM_DESC(eluk_kbd_commit_logo, "Commit logo colors and mode setup to WMI.");
 
 MODULE_DEVICE_TABLE(wmi, eluk_led_wmi_device_ids);
 MODULE_ALIAS_ELUK_LED_WMI();

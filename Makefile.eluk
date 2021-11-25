@@ -1,9 +1,10 @@
 #
 # Copyright (c) 2018-2020 TUXEDO Computers GmbH <tux@tuxedocomputers.com>
+# Copyright (c) 2021 Renaud Lepage <root@cybikbase.com> in part
 #
-# This file is part of tuxedo-keyboard.
+# This file is part of eluk-wmi, an offshoot of tuxedo-keyboard.
 #
-# tuxedo-keyboard is free software: you can redistribute it and/or modify
+# eluk-wmi is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -36,10 +37,10 @@ MODULE_NAME := $(shell sed -n 's/^PACKAGE_NAME=\([^\n]*\)/\1/p' dkms.eluk.conf 2
 
 dkmsinstall:
 	cp -R . /usr/src/$(MODULE_NAME)-$(VER)
-	dkms install -m $(MODULE_NAME) -v $(VER)
+	dkms install -c dkms.eluk.conf -m $(MODULE_NAME) -v $(VER)
 
 dkmsremove:
-	dkms remove -m $(MODULE_NAME) -v $(VER) --all
+	dkms remove -c dkms.eluk.conf -m $(MODULE_NAME) -v $(VER) --all
 	rm -rf /usr/src/$(MODULE_NAME)-$(VER)
 
 # --------------

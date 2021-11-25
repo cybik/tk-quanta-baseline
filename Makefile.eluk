@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <https://www.gnu.org/licenses/>.
 #
-obj-m := ./src/eluk-led-wmi.o
+obj-m := ./src/eluk-wmi-led.o \
+         ./src/eluk-wmi-shared.o
 
 PWD := $(shell pwd)
 KDIR := /lib/modules/$(shell uname -r)/build

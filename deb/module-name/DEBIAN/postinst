@@ -62,14 +62,14 @@ case "$1" in
         rmmod clevo_wmi > /dev/null 2>&1 || true
         rmmod clevo_acpi > /dev/null 2>&1 || true
         rmmod tuxedo_keyboard > /dev/null 2>&1 || true
-        rmmod eluk-led-wmi > /dev/null 2>&1 || true
+        rmmod eluk-wmi-led > /dev/null 2>&1 || true
         
         modprobe tuxedo_keyboard > /dev/null 2>&1 || true
         modprobe uniwill_wmi > /dev/null 2>&1 || true
         modprobe clevo_wmi > /dev/null 2>&1 || true
         modprobe clevo_acpi > /dev/null 2>&1 || true
         modprobe tuxedo_io > /dev/null 2>&1 || true
-        modprobe eluk-led-wmi > /dev/null 2>&1 || true
+        modprobe eluk-wmi-led > /dev/null 2>&1 || true
 
         # Restart tccd after reload if it was running
         if $TCCD_RUNNING; then

@@ -136,60 +136,6 @@ static struct quanta_interfaces_t {
 quanta_evt_cb_int_t quanta_evt_cb_int;
 quanta_evt_cb_buf_t quanta_evt_cb_buf;
 
-
-static DEFINE_MUTEX(quanta_interface_modification_lock);
-
-u32 quanta_add_interface(const char* interface_name,
-                         struct quanta_interface_t *interface)
-{
-    mutex_lock(&quanta_interface_modification_lock);
-
-    if (strcmp(interface->string_id, interface_name) == 0) {
-        quanta_interfaces.wmi = interface;
-    } else {
-        TUXEDO_DEBUG("trying to add unknown interface\n");
-        mutex_unlock(&quanta_interface_modification_lock);
-        return -EINVAL;
-    }
-    interface->evt_cb_int = quanta_evt_cb_int;
-    interface->evt_cb_buf = quanta_evt_cb_buf;
-
-    mutex_unlock(&quanta_interface_modification_lock);
-
-    return 0;
-}
-EXPORT_SYMBOL(quanta_add_interface);
-
-u32 quanta_remove_interface(const char* interface_name, 
-                            struct quanta_interface_t *interface)
-{
-    mutex_lock(&quanta_interface_modification_lock);
-
-    if (strcmp(interface->string_id, interface_name) == 0) {
-        quanta_interfaces.wmi = NULL;
-    } else {
-        mutex_unlock(&quanta_interface_modification_lock);
-        return -EINVAL;
-    }
-
-    mutex_unlock(&quanta_interface_modification_lock);
-
-    return 0;
-}
-EXPORT_SYMBOL(quanta_remove_interface);
-
-u32 quanta_get_active_interface_id(char **id_str)
-{
-    if (IS_ERR_OR_NULL(quanta_interfaces.wmi))
-        return -ENODEV;
-
-    if (!IS_ERR_OR_NULL(id_str))
-        *id_str = quanta_interfaces.wmi->string_id;
-
-    return 0;
-}
-EXPORT_SYMBOL(quanta_get_active_interface_id);
-
 void quanta_evt_cb_int(u32 code)
 {
     // NOOP

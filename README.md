@@ -49,7 +49,7 @@ Modules included in this package:
 
 Additional modules not related to Tuxedo products:
 
-- eluk-led-wmi
+- eluk-wmi-led
 
 # Building and Installing <a name="building"></a>
 

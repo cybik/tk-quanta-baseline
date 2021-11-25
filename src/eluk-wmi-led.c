@@ -44,7 +44,7 @@
 #include <linux/wmi.h>
 #include <linux/version.h>
 #include <linux/delay.h>
-#include "eluk-led-wmi.h"
+#include "eluk-wmi-led.h"
 
 // Bitwise macro to create the color.
 #define BITWISE_A3(X, Y, Z) ((((X << 4) | Y) << 24) | Z)
@@ -473,6 +473,7 @@ MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on TUXEDO code");
 MODULE_VERSION("0.0.2");
 MODULE_LICENSE("GPL");
+MODULE_SOFTDEP("pre: eluk-wmi-shared");
 
 // Readonly perm macros
 #define PERM_RO       (S_IRUSR | S_IRGRP | S_IROTH)

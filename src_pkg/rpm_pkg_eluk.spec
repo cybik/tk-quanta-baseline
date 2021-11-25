@@ -71,9 +71,9 @@ for POSTINST in /usr/lib/dkms/common.postinst /usr/share/%{module}/postinst; do
         # Attempt to (re-)load module immediately, fail silently if not possible at this stage
         echo "(Re)load modules if possible"
 
-        rmmod eluk-led-wmi > /dev/null 2>&1 || true
+        rmmod eluk-wmi-led > /dev/null 2>&1 || true
         
-        modprobe eluk-led-wmi > /dev/null 2>&1 || true
+        modprobe eluk-wmi-led > /dev/null 2>&1 || true
 
         exit $RET
     fi

@@ -197,7 +197,7 @@ int eluk_shared_wmi_set_value_exec(void *bytes, int size) {
     struct acpi_buffer input;
     acpi_status status;
 
-    pr_info("Writing from shared.\n");
+    //pr_info("Writing from shared.\n");
 
     input.length = size; // u8 array
     input.pointer = bytes;
@@ -212,7 +212,7 @@ EXPORT_SYMBOL(eluk_shared_wmi_set_value_exec);
 module_wmi_driver(eluk_shared_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
-MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on TUXEDO code");
+MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");
 MODULE_VERSION("0.0.4");
 MODULE_LICENSE("GPL");
 

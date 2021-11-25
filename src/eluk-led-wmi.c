@@ -50,7 +50,7 @@
 #define ELUK_EXPERIMENTAL
 
 // Bitwise macro to create the color.
-#define BITWISE_A3(X, Y, Z) ((((X << 4) | Y) << 24) | Z)
+#define BITW_A3(X, Y, Z) ((((X << 4) | Y) << 24) | Z)
 
 // Module-wide values for setting. Has "original" unset default values
 
@@ -63,25 +63,25 @@
  **********************************************************/
 
 // Default Colors
-static uint eluk_kbd_rgb_set_logo_color   = 0x00FFFF; // Default: Teal
-static uint eluk_kbd_rgb_set_trunk_color  = 0x00FFFF; // Default: Teal
-static uint eluk_kbd_rgb_set_left_color   = 0xFF0000; // Default: Red
-static uint eluk_kbd_rgb_set_cntr_color   = 0x00FF00; // Default: Green
-static uint eluk_kbd_rgb_set_right_color  = 0x0000FF; // Default: Blue
+static uint rgb_logo_color   = 0x00FFFF; // Default: Teal
+static uint rgb_trunk_color  = 0x00FFFF; // Default: Teal
+static uint rgb_left_color   = 0xFF0000; // Default: Red
+static uint rgb_cntr_color   = 0x00FF00; // Default: Green
+static uint rgb_right_color  = 0x0000FF; // Default: Blue
 
 // Default Effect    ( << 28 )
-static uint eluk_kbd_rgb_set_logo_effect  = 0x1;      // Default: Online? to check
-static uint eluk_kbd_rgb_set_trunk_effect = 0x1;      // Default: Online? to check
-static uint eluk_kbd_rgb_set_left_effect  = 0x1;      // Default: 100%
-static uint eluk_kbd_rgb_set_cntr_effect  = 0x1;      // Default: 100%
-static uint eluk_kbd_rgb_set_right_effect = 0x1;      // Default: 100%
+static uint rgb_logo_effect  = 0x1;      // Default: Online? to check
+static uint rgb_trunk_effect = 0x1;      // Default: Online? to check
+static uint rgb_left_effect  = 0x1;      // Default: 100%
+static uint rgb_cntr_effect  = 0x1;      // Default: 100%
+static uint rgb_right_effect = 0x1;      // Default: 100%
 
 // Default Intensity ( << 24 )
-static uint eluk_kbd_rgb_set_logo_level  = 0x0;       // Default: Online? to check
-static uint eluk_kbd_rgb_set_trunk_level = 0x1;       // Default: 50%
-static uint eluk_kbd_rgb_set_left_level  = 0x1;       // Default: 50%
-static uint eluk_kbd_rgb_set_cntr_level  = 0x1;       // Default: 50%
-static uint eluk_kbd_rgb_set_right_level = 0x1;       // Default: 50%
+static uint rgb_logo_level   = 0x0;       // Default: Online? to check
+static uint rgb_trunk_level  = 0x1;       // Default: 50%
+static uint rgb_left_level   = 0x1;       // Default: 50%
+static uint rgb_cntr_level   = 0x1;       // Default: 50%
+static uint rgb_right_level  = 0x1;       // Default: 50%
 
 // endsection: Defaults
 
@@ -275,112 +275,112 @@ static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
 
 static void eluk_led_wmi_set_default_colors(void)
 {
-    eluk_kbd_rgb_set_logo_color  = 0x00FFFF;
-    eluk_kbd_rgb_set_trunk_color = 0x00FFFF;
-    eluk_kbd_rgb_set_left_color  = 0xFF0000;
-    eluk_kbd_rgb_set_cntr_color  = 0x00FF00;
-    eluk_kbd_rgb_set_right_color = 0x0000FF;
+    rgb_logo_color  = 0x00FFFF;
+    rgb_trunk_color = 0x00FFFF;
+    rgb_left_color  = 0xFF0000;
+    rgb_cntr_color  = 0x00FF00;
+    rgb_right_color = 0x0000FF;
 }
 
 static void eluk_led_wmi_set_kbd_zones_effect(u8 val)
 {
-    eluk_kbd_rgb_set_left_effect  = val;
-    eluk_kbd_rgb_set_cntr_effect  = val;
-    eluk_kbd_rgb_set_right_effect = val;
+    rgb_left_effect  = val;
+    rgb_cntr_effect  = val;
+    rgb_right_effect = val;
 }
 
 static void eluk_led_wmi_set_kbd_zones_level(u8 val)
 {
-    eluk_kbd_rgb_set_left_level   = val;
-    eluk_kbd_rgb_set_cntr_level   = val;
-    eluk_kbd_rgb_set_right_level  = val;
+    rgb_left_level   = val;
+    rgb_cntr_level   = val;
+    rgb_right_level  = val;
 }
 
-static int eluk_led_wmi_rgb_offline(char *buffer, const struct kernel_param *kp)
+static int eluk_led_wmi_offline(char *buffer, const struct kernel_param *kp)
 {
     // Set offline, but hard for now.
     eluk_led_wmi_set_default_colors();
     eluk_led_wmi_set_kbd_zones_effect (0x1);
     eluk_led_wmi_set_kbd_zones_level  (0x0);
-    eluk_kbd_rgb_set_logo_effect     = 0x1;
-    eluk_kbd_rgb_set_logo_level      = 0x0;
-    eluk_kbd_rgb_set_trunk_effect    = 0x1;
-    eluk_kbd_rgb_set_trunk_level     = 0x0;
+    rgb_logo_effect     = 0x1;
+    rgb_logo_level      = 0x0;
+    rgb_trunk_effect    = 0x1;
+    rgb_trunk_level     = 0x0;
     strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
     return strlen(buffer);
 }
 
-static int eluk_led_wmi_rgb_solid_50(char *buffer, const struct kernel_param *kp)
+static int eluk_led_wmi_solid_50(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
     eluk_led_wmi_set_kbd_zones_effect (0x1);
     eluk_led_wmi_set_kbd_zones_level  (0x1);
-    eluk_kbd_rgb_set_logo_effect     = 0x1;
-    eluk_kbd_rgb_set_logo_level      = 0x0;
-    eluk_kbd_rgb_set_trunk_effect    = 0x1;
-    eluk_kbd_rgb_set_trunk_level     = 0x1;
+    rgb_logo_effect     = 0x1;
+    rgb_logo_level      = 0x0;
+    rgb_trunk_effect    = 0x1;
+    rgb_trunk_level     = 0x1;
     strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
     return strlen(buffer);
 }
 
-static int eluk_led_wmi_rgb_solid_100(char *buffer, const struct kernel_param *kp)
+static int eluk_led_wmi_solid_100(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
     eluk_led_wmi_set_kbd_zones_effect (0x1);
     eluk_led_wmi_set_kbd_zones_level  (0x2);
-    eluk_kbd_rgb_set_logo_effect     = 0x1;
-    eluk_kbd_rgb_set_logo_level      = 0x0;
-    eluk_kbd_rgb_set_trunk_effect    = 0x1;
-    eluk_kbd_rgb_set_trunk_level     = 0x2;
+    rgb_logo_effect     = 0x1;
+    rgb_logo_level      = 0x0;
+    rgb_trunk_effect    = 0x1;
+    rgb_trunk_level     = 0x2;
     strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
     return strlen(buffer);
 }
 
-static int eluk_led_wmi_rgb_breathing_50(char *buffer, const struct kernel_param *kp)
+static int eluk_led_wmi_brth_50(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
     eluk_led_wmi_set_kbd_zones_effect (0x3);
     eluk_led_wmi_set_kbd_zones_level  (0x1);
-    eluk_kbd_rgb_set_logo_effect     = 0x1;
-    eluk_kbd_rgb_set_logo_level      = 0x0;
-    eluk_kbd_rgb_set_trunk_effect    = 0x3;
-    eluk_kbd_rgb_set_trunk_level     = 0x1;
+    rgb_logo_effect     = 0x1;
+    rgb_logo_level      = 0x0;
+    rgb_trunk_effect    = 0x3;
+    rgb_trunk_level     = 0x1;
     strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
     return strlen(buffer);
 }
 
-static int eluk_led_wmi_rgb_breathing_100(char *buffer, const struct kernel_param *kp)
+static int eluk_led_wmi_brth_100(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
     eluk_led_wmi_set_kbd_zones_effect (0x3);
     eluk_led_wmi_set_kbd_zones_level  (0x2);
-    eluk_kbd_rgb_set_logo_effect     = 0x1;
-    eluk_kbd_rgb_set_logo_level      = 0x0;
-    eluk_kbd_rgb_set_trunk_effect    = 0x3;
-    eluk_kbd_rgb_set_trunk_level     = 0x2;
+    rgb_logo_effect     = 0x1;
+    rgb_logo_level      = 0x0;
+    rgb_trunk_effect    = 0x3;
+    rgb_trunk_level     = 0x2;
     strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
     return strlen(buffer);
 }
 
 static int eluk_led_wmi_get_logo_a3(void)
 {
-    return BITWISE_A3(eluk_kbd_rgb_set_logo_effect, eluk_kbd_rgb_set_logo_level, eluk_kbd_rgb_set_logo_color);
+    return BITW_A3(rgb_logo_effect, rgb_logo_level, rgb_logo_color);
 }
 static int eluk_led_wmi_get_trunk_a3(void)
 {
-    return BITWISE_A3(eluk_kbd_rgb_set_trunk_effect, eluk_kbd_rgb_set_trunk_level, eluk_kbd_rgb_set_trunk_color);
+    return BITW_A3(rgb_trunk_effect, rgb_trunk_level, rgb_trunk_color);
 }
 static int eluk_led_wmi_get_right_a3(void)
 {
-    return BITWISE_A3(eluk_kbd_rgb_set_right_effect, eluk_kbd_rgb_set_right_level, eluk_kbd_rgb_set_right_color);
+    return BITW_A3(rgb_right_effect, rgb_right_level, rgb_right_color);
 }
 static int eluk_led_wmi_get_centre_a3(void)
 {
-    return BITWISE_A3(eluk_kbd_rgb_set_cntr_effect, eluk_kbd_rgb_set_cntr_level, eluk_kbd_rgb_set_cntr_color);
+    return BITW_A3(rgb_cntr_effect, rgb_cntr_level, rgb_cntr_color);
 }
 static int eluk_led_wmi_get_left_a3(void)
 {
-    return BITWISE_A3(eluk_kbd_rgb_set_left_effect, eluk_kbd_rgb_set_left_level, eluk_kbd_rgb_set_left_color);
+    return BITW_A3(rgb_left_effect, rgb_left_level, rgb_left_color);
 }
 
 #define APPLY_SETTINGS(SETTINGS, COUNT, BUFFER) \
@@ -464,7 +464,7 @@ static int eluk_led_wmi_colors_commit_logo(char *buffer, const struct kernel_par
 module_wmi_driver(eluk_led_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
-MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on TUXEDO code");
+MODULE_DESCRIPTION("LED functions for the Eluktronics Prometheus XVI WMI interface");
 MODULE_VERSION("0.0.4");
 MODULE_LICENSE("GPL");
 MODULE_SOFTDEP("pre: eluk-shared-wmi");
@@ -475,92 +475,92 @@ MODULE_SOFTDEP("pre: eluk-shared-wmi");
 
 // section: preset ops
 static const struct kernel_param_ops eluk_kbd_preset_offline_ops = {
-    .get    = eluk_led_wmi_rgb_offline,
+    .get    = eluk_led_wmi_offline,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_offline, &eluk_kbd_preset_offline_ops, NULL, PERM_RO);
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_offline, "Apply 0-out RGB driver preset.");
+module_param_cb(rgb_preset_offline, &eluk_kbd_preset_offline_ops, NULL, PERM_RO);
+MODULE_PARM_DESC(rgb_preset_offline, "Apply 0-out RGB driver preset.");
 
 static const struct kernel_param_ops eluk_kbd_preset_solid_50_ops = {
-    .get    = eluk_led_wmi_rgb_solid_50,
+    .get    = eluk_led_wmi_solid_50,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_solid_50, &eluk_kbd_preset_solid_50_ops, NULL, PERM_RO);
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_50, "Apply Solid Half Brightness RGB driver preset.");
+module_param_cb(rgb_preset_solid_50, &eluk_kbd_preset_solid_50_ops, NULL, PERM_RO);
+MODULE_PARM_DESC(rgb_preset_solid_50, "Apply Solid Half Brightness RGB driver preset.");
  
 static const struct kernel_param_ops eluk_kbd_preset_solid_100_ops = {
-    .get    = eluk_led_wmi_rgb_solid_100,
+    .get    = eluk_led_wmi_solid_100,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_solid_100, &eluk_kbd_preset_solid_100_ops, NULL, PERM_RO);
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_100, "Apply Solid Full Brightness RGB driver preset.");
+module_param_cb(rgb_preset_solid_100, &eluk_kbd_preset_solid_100_ops, NULL, PERM_RO);
+MODULE_PARM_DESC(rgb_preset_solid_100, "Apply Solid Full Brightness RGB driver preset.");
 
 static const struct kernel_param_ops eluk_kbd_preset_breathing_50_ops = {
-    .get    = eluk_led_wmi_rgb_breathing_50,
+    .get    = eluk_led_wmi_brth_50,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_breathing_50, &eluk_kbd_preset_breathing_50_ops, NULL, PERM_RO);
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_50, "Apply Breathing Half Brightness RGB driver preset.");
+module_param_cb(rgb_preset_breathing_50, &eluk_kbd_preset_breathing_50_ops, NULL, PERM_RO);
+MODULE_PARM_DESC(rgb_preset_breathing_50, "Apply Breathing Half Brightness RGB driver preset.");
  
 static const struct kernel_param_ops eluk_kbd_preset_breathing_100_ops = {
-    .get    = eluk_led_wmi_rgb_breathing_100,
+    .get    = eluk_led_wmi_brth_100,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_breathing_100, &eluk_kbd_preset_breathing_100_ops, NULL, PERM_RO);
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_100, "Apply Breathing Full Brightness RGB driver preset.");
+module_param_cb(rgb_preset_breathing_100, &eluk_kbd_preset_breathing_100_ops, NULL, PERM_RO);
+MODULE_PARM_DESC(rgb_preset_breathing_100, "Apply Breathing Full Brightness RGB driver preset.");
 // endsection: preset ops
 
 // section: Zone Colors
-module_param(eluk_kbd_rgb_set_logo_color, uint, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_color, "Color for the Logo.");
+module_param_named(rgb_set_logo_color, rgb_logo_color, uint, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_logo_color, "Color for the Logo.");
 
-module_param(eluk_kbd_rgb_set_trunk_color, uint, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_color, "Color for the Trunk.");
+module_param_named(rgb_set_trunk_color, rgb_trunk_color, uint, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_trunk_color, "Color for the Trunk.");
 
-module_param(eluk_kbd_rgb_set_left_color, uint, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_left_color, "Color for the Left.");
+module_param_named(rgb_set_left_color, rgb_left_color, uint, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_left_color, "Color for the Left.");
 
-module_param(eluk_kbd_rgb_set_cntr_color, uint, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_color, "Color for the Center.");
+module_param_named(rgb_set_cntr_color, rgb_cntr_color, uint, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_cntr_color, "Color for the Center.");
 
-module_param(eluk_kbd_rgb_set_right_color, uint, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_right_color, "Color for the Right.");
+module_param_named(rgb_set_right_color, rgb_right_color, uint, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_right_color, "Color for the Right.");
 // endsection: Zone Colors
 
 
 // section: Effect/Brightness Setting
 // TODO: can these be made smaller my lord.
-module_param(eluk_kbd_rgb_set_logo_effect, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_effect, "Effect for the Logo.");
+module_param_named(rgb_set_logo_effect, rgb_logo_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_logo_effect, "Effect for the Logo.");
 
-module_param(eluk_kbd_rgb_set_trunk_effect, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_effect, "Effect for the Trunk.");
+module_param_named(rgb_set_trunk_effect, rgb_trunk_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_trunk_effect, "Effect for the Trunk.");
 
-module_param(eluk_kbd_rgb_set_left_effect, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_left_effect, "Effect for the Left.");
+module_param_named(rgb_set_left_effect, rgb_left_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_left_effect, "Effect for the Left.");
 
-module_param(eluk_kbd_rgb_set_cntr_effect, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_effect, "Effect for the Center.");
+module_param_named(rgb_set_cntr_effect, rgb_cntr_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_cntr_effect, "Effect for the Center.");
 
-module_param(eluk_kbd_rgb_set_right_effect, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_right_effect, "Effect for the Right.");
+module_param_named(rgb_set_right_effect, rgb_right_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_right_effect, "Effect for the Right.");
 
 // --
 
-module_param(eluk_kbd_rgb_set_logo_level, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_level, "Brightness for the Logo.");
+module_param_named(rgb_set_logo_level, rgb_logo_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_logo_level, "Brightness for the Logo.");
 
-module_param(eluk_kbd_rgb_set_trunk_level, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_level, "Brightness for the Trunk.");
+module_param_named(rgb_set_trunk_level, rgb_trunk_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_trunk_level, "Brightness for the Trunk.");
 
-module_param(eluk_kbd_rgb_set_left_level, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_left_level, "Brightness for the Left.");
+module_param_named(rgb_set_left_level, rgb_left_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_left_level, "Brightness for the Left.");
 
-module_param(eluk_kbd_rgb_set_cntr_level, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_level, "Brightness for the Center.");
+module_param_named(rgb_set_cntr_level, rgb_cntr_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_cntr_level, "Brightness for the Center.");
 
-module_param(eluk_kbd_rgb_set_right_level, int, S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(eluk_kbd_rgb_set_right_level, "Brightness for the Right.");
+module_param_named(rgb_set_right_level, rgb_right_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(rgb_set_right_level, "Brightness for the Right.");
 // endsection: Effect/Brightness Setting
 
 
@@ -569,30 +569,30 @@ static const struct kernel_param_ops eluk_commit_all_ops = {
     .get    = eluk_led_wmi_colors_commit_all,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_all, &eluk_commit_all_ops, NULL, PERM_RO_ADMIN);
-MODULE_PARM_DESC(eluk_kbd_rgb_commit_all, "Commit all colors and mode setup to WMI.");
+module_param_cb(rgb_commit_all, &eluk_commit_all_ops, NULL, PERM_RO_ADMIN);
+MODULE_PARM_DESC(rgb_commit_all, "Commit all colors and mode setup to WMI.");
 
 static const struct kernel_param_ops eluk_commit_kbd_ops = {
     .get    = eluk_led_wmi_colors_commit_kbd,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_kbd, &eluk_commit_kbd_ops, NULL, PERM_RO_ADMIN);
-MODULE_PARM_DESC(eluk_kbd_rgb_commit_kbd, "Commit keyboard colors and mode setup to WMI.");
+module_param_cb(rgb_commit_kbd, &eluk_commit_kbd_ops, NULL, PERM_RO_ADMIN);
+MODULE_PARM_DESC(rgb_commit_kbd, "Commit keyboard colors and mode setup to WMI.");
 
 static const struct kernel_param_ops eluk_commit_trunk_ops = {
     .get    = eluk_led_wmi_colors_commit_trunk,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_trunk, &eluk_commit_trunk_ops, NULL, PERM_RO_ADMIN);
-MODULE_PARM_DESC(eluk_kbd_rgb_commit_trunk, "Commit trunk colors and mode setup to WMI.");
+module_param_cb(rgb_commit_trunk, &eluk_commit_trunk_ops, NULL, PERM_RO_ADMIN);
+MODULE_PARM_DESC(rgb_commit_trunk, "Commit trunk colors and mode setup to WMI.");
 
 // Unused on Eluktronics
 static const struct kernel_param_ops eluk_commit_logo_ops = {
     .get    = eluk_led_wmi_colors_commit_logo,
     .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_logo, &eluk_commit_logo_ops, NULL, PERM_RO_ADMIN);
-MODULE_PARM_DESC(eluk_kbd_rgb_commit_logo, "Commit logo colors and mode setup to WMI.");
+module_param_cb(rgb_commit_logo, &eluk_commit_logo_ops, NULL, PERM_RO_ADMIN);
+MODULE_PARM_DESC(rgb_commit_logo, "Commit logo colors and mode setup to WMI.");
 // endsection: commit ops
 
 MODULE_DEVICE_TABLE(wmi, eluk_led_wmi_device_ids);

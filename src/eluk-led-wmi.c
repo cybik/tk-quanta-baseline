@@ -86,7 +86,7 @@ static uint eluk_kbd_rgb_set_right_level = 0x1;       // Default: 50%
 // Commit predefs
 static int eluk_led_wmi_colors_commit_all(char *, const struct kernel_param *);
 
-DEFINE_MUTEX(eluk_wmi_lock); // unused?
+//DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
 struct quanta_interface_t eluk_led_wmi_iface = {
     .string_id = ELUK_LED_IFACE_WMI_STRID,
@@ -140,9 +140,8 @@ static int eluk_led_wmi_probe(struct wmi_device *wdev, const void *dummy_context
 
     quanta_add_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
 
-    pr_info("probe: Generic Quanta interface initialized\n");
-
 #if defined(ELUK_DEBUGGING)
+    pr_info("probe: Generic Quanta interface initialized\n");
     if(wmi_has_guid(ELUK_WMI_MGMT_GUID_LED_RD_WR)) {
         eluk_led_wmi_run_query();
     }
@@ -156,8 +155,10 @@ static int  eluk_led_wmi_remove(struct wmi_device *wdev)
 static void eluk_led_wmi_remove(struct wmi_device *wdev)
 #endif
 {
-    pr_debug("Quanta/Eluk Driver removed. peace out.\n");
     quanta_remove_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
+#if defined(ELUK_DEBUGGING)
+    pr_debug("Quanta/Eluk Driver removed. peace out.\n");
+#endif
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0)
     return 0;
 #endif
@@ -165,30 +166,51 @@ static void eluk_led_wmi_remove(struct wmi_device *wdev)
 
 static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 {
+#if defined(ELUK_DEBUGGING)
     pr_debug("notify: Generic Quanta interface has received a signal\n");
     pr_debug("notify:  Generic Quanta interface Notify Info:\n");
     pr_debug("notify:   objtype: %d (%0#6x)\n", obj->type, obj->type);
-    if (!obj) {
+#endif
+    if (!obj)
+    {
+#if defined(ELUK_DEBUGGING)
         pr_debug("expected ACPI object doesn't exist\n");
-    } else if (obj->type == ACPI_TYPE_INTEGER) {
-        if (!IS_ERR_OR_NULL(eluk_led_wmi_iface.evt_cb_int)) {
+#endif
+    }
+    else if (obj->type == ACPI_TYPE_INTEGER) 
+    {
+        if (!IS_ERR_OR_NULL(eluk_led_wmi_iface.evt_cb_int))
+        {
             u32 code;
             code = obj->integer.value;
             // Execute registered callback
             eluk_led_wmi_iface.evt_cb_int(code);
-        } else {
+        }
+#if defined(ELUK_DEBUGGING)
+        else
+        {
             pr_debug("no registered callback\n");
         }
+#endif
     } else if (obj->type == ACPI_TYPE_BUFFER) {
-        if (!IS_ERR_OR_NULL(eluk_led_wmi_iface.evt_cb_buf)) {
+        if (!IS_ERR_OR_NULL(eluk_led_wmi_iface.evt_cb_buf))
+        {
             // Execute registered callback
             eluk_led_wmi_iface.evt_cb_buf(obj->buffer.length, obj->buffer.pointer);
-        } else {
+        }
+#if defined(ELUK_DEBUGGING)
+        else
+        {
             pr_debug("no registered callback\n");
         }
-    } else {
+#endif
+    }
+#if defined(ELUK_DEBUGGING)
+    else
+    {
         pr_debug("unknown event type - %d (%0#6x)\n", obj->type, obj->type);
     }
+#endif
 }
 
 void quanta_evt_cb_buf(u8 b_l, u8* b_ptr)
@@ -240,17 +262,18 @@ static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
     bool failed = false;
 
     for(iter = 0; ((iter < count) && !failed); iter++) {
+#if defined(ELUK_DEBUGGING)
         pr_debug("Attempting to set LED colors via WMI.\n");
+#endif
 
         input.length = (sizeof(u8)*32); // u8 array
         input.pointer = preset[iter].bytes;
         status = wmi_set_block(ELUK_WMI_MGMT_GUID_LED_RD_WR, 0, &input);
         if (ACPI_FAILURE(status)) {
-            pr_info("Write fail, meh. We're debugging at this point.\n");
-            pr_info("Reboot to windows to fix the state?\n");
+            pr_info("Write failure. Please report this to the developer.\n");
             failed = true;
         }
-        // No need to read after; this module only sets and doesn't query.
+        // No need to read after; this method is only used to set.
     }
     return (failed?1:0);
 }

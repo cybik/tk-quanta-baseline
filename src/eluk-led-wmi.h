@@ -64,7 +64,7 @@
 #define ELUK_WMI_LED_ZONE_RIGHT           0x03
 
 // Known effect/brightness Settings ("alpha" channels)
-#define ELUK_WMI_LED_BREF_SOLID_OFF       0x00 // 0? not -1? eh. validated.
+#define ELUK_WMI_LED_BREF_SOLID_OFF       0x10 // 0? not -1? eh. validated.
 #define ELUK_WMI_LED_BREF_SOLID_HALF      0x11 // valid for trunk also
 #define ELUK_WMI_LED_BREF_SOLID_FULL      0x12 // valid for trunk also
 
@@ -82,6 +82,17 @@
 #define ELUK_WMI_LED_BREF_AMBILIGHT_OFF   0x70
 #define ELUK_WMI_LED_BREF_AMBILIGHT_HALF  0x71
 #define ELUK_WMI_LED_BREF_AMBILIGHT_FULL  0x72
+
+// Off/Half/Full
+#define ELUK_WMI_LED_BRIGHT_NONE           0x0
+#define ELUK_WMI_LED_BRIGHT_HALF           0x1
+#define ELUK_WMI_LED_BRIGHT_FULL           0x2
+
+// Off/Half/Full
+#define ELUK_WMI_LED_EFFECT_SOLID          0x1
+#define ELUK_WMI_LED_EFFECT_BREATHE        0x3
+#define ELUK_WMI_LED_EFFECT_RAINBOW        0x6
+#define ELUK_WMI_LED_EFFECT_AMBIENT        0x7
 
 //#define ELUK_WMI_LED_BREF_
 

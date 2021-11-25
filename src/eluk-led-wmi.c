@@ -46,6 +46,8 @@
 #include <linux/delay.h>
 #include "eluk-led-wmi.h"
 
+// Bitwise macro to create the color.
+#define BITWISE_A3(X, Y, Z) ((((X << 4) | Y) << 24) | Z)
 
 // Module-wide values for setting. Has "original" unset default values
 
@@ -57,14 +59,23 @@ static uint eluk_kbd_rgb_set_cntr_color  = 0x00FF00; // Default: Green
 static uint eluk_kbd_rgb_set_right_color = 0x0000FF; // Default: Blue
 
 // Default Effect / Intensity Settings. use << 5? - issue is the base storage is too big argh
-static uint eluk_kbd_rgb_set_logo_alpha  = 0x10; // Default: Online? to check
-static uint eluk_kbd_rgb_set_trunk_alpha = 0x10; // Default: Online? to check
-static uint eluk_kbd_rgb_set_left_alpha  = 0x12; // Default: 100%
-static uint eluk_kbd_rgb_set_cntr_alpha  = 0x12; // Default: 100%
-static uint eluk_kbd_rgb_set_right_alpha = 0x12; // Default: 100%
+// << 28
+static uint eluk_kbd_rgb_set_logo_effect  = 0x1; // Default: Online? to check
+static uint eluk_kbd_rgb_set_trunk_effect = 0x1; // Default: Online? to check
+static uint eluk_kbd_rgb_set_left_effect  = 0x1; // Default: 100%
+static uint eluk_kbd_rgb_set_cntr_effect  = 0x1; // Default: 100%
+static uint eluk_kbd_rgb_set_right_effect = 0x1; // Default: 100%
+
+// << 24
+static uint eluk_kbd_rgb_set_logo_level  = 0x0; // Default: Online? to check
+static uint eluk_kbd_rgb_set_trunk_level = 0x2; // Default: Online? to check
+static uint eluk_kbd_rgb_set_left_level  = 0x2; // Default: 100%
+static uint eluk_kbd_rgb_set_cntr_level  = 0x2; // Default: 100%
+static uint eluk_kbd_rgb_set_right_level = 0x2; // Default: 100%
+
 
 // Commit predefs
-static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp);
+static int eluk_led_wmi_colors_commit_all(char *, const struct kernel_param *);
 
 DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
@@ -247,129 +258,181 @@ static void eluk_led_wmi_set_default_colors(void)
 
 static void eluk_led_wmi_set_kbd_zones_effect(u8 val)
 {
-    eluk_kbd_rgb_set_left_alpha  = val;
-    eluk_kbd_rgb_set_cntr_alpha  = val;
-    eluk_kbd_rgb_set_right_alpha = val;
+    eluk_kbd_rgb_set_left_effect  = val;
+    eluk_kbd_rgb_set_cntr_effect  = val;
+    eluk_kbd_rgb_set_right_effect = val;
 }
 
-static int eluk_led_wmi_rgb_offline(const char *val, const struct kernel_param *kp)
+static void eluk_led_wmi_set_kbd_zones_level(u8 val)
 {
-    // Set offline, but hard for now. 
-    // TODO: refactor around effect values as well.
-    eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect(0x10);
-    eluk_kbd_rgb_set_logo_alpha     = 0x10;
-    eluk_kbd_rgb_set_trunk_alpha    = 0x10;
-    return eluk_led_wmi_colors_commit_all(NULL, NULL);
+    eluk_kbd_rgb_set_left_level   = val;
+    eluk_kbd_rgb_set_cntr_level   = val;
+    eluk_kbd_rgb_set_right_level  = val;
 }
 
-static int eluk_led_wmi_rgb_solid_50(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_rgb_offline(char *buffer, const struct kernel_param *kp)
 {
+    // Set offline, but hard for now.
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect(0x11);
-    eluk_kbd_rgb_set_logo_alpha     = 0x10;
-    eluk_kbd_rgb_set_trunk_alpha    = 0x11;
-    return eluk_led_wmi_colors_commit_all(NULL, NULL);
+    eluk_led_wmi_set_kbd_zones_effect (0x1);
+    eluk_led_wmi_set_kbd_zones_level  (0x0);
+    eluk_kbd_rgb_set_logo_effect     = 0x1;
+    eluk_kbd_rgb_set_logo_level      = 0x0;
+    eluk_kbd_rgb_set_trunk_effect    = 0x1;
+    eluk_kbd_rgb_set_trunk_level     = 0x0;
+    strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
+    return strlen(buffer);
 }
 
-static int eluk_led_wmi_rgb_solid_100(const char *val, const struct kernel_param *kp)
-{
-    eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect(0x12);
-    eluk_kbd_rgb_set_logo_alpha     = 0x10;
-    eluk_kbd_rgb_set_trunk_alpha    = 0x12;
-    return eluk_led_wmi_colors_commit_all(NULL, NULL);
-}
-
-static int eluk_led_wmi_rgb_breathing_50(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_rgb_solid_50(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect(0x31);
-    eluk_kbd_rgb_set_logo_alpha     = 0x10;
-    eluk_kbd_rgb_set_trunk_alpha    = 0x31;
-    return eluk_led_wmi_colors_commit_all(NULL, NULL);
+    eluk_led_wmi_set_kbd_zones_effect (0x1);
+    eluk_led_wmi_set_kbd_zones_level  (0x1);
+    eluk_kbd_rgb_set_logo_effect     = 0x1;
+    eluk_kbd_rgb_set_logo_level      = 0x0;
+    eluk_kbd_rgb_set_trunk_effect    = 0x1;
+    eluk_kbd_rgb_set_trunk_level     = 0x1;
+    strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
+    return strlen(buffer);
 }
 
-static int eluk_led_wmi_rgb_breathing_100(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_rgb_solid_100(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect(0x32);
-    eluk_kbd_rgb_set_logo_alpha     = 0x10;
-    eluk_kbd_rgb_set_trunk_alpha    = 0x32;
-    return eluk_led_wmi_colors_commit_all(NULL, NULL);
+    eluk_led_wmi_set_kbd_zones_effect (0x1);
+    eluk_led_wmi_set_kbd_zones_level  (0x2);
+    eluk_kbd_rgb_set_logo_effect     = 0x1;
+    eluk_kbd_rgb_set_logo_level      = 0x0;
+    eluk_kbd_rgb_set_trunk_effect    = 0x1;
+    eluk_kbd_rgb_set_trunk_level     = 0x2;
+    strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
+    return strlen(buffer);
 }
 
-static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_rgb_breathing_50(char *buffer, const struct kernel_param *kp)
+{
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect (0x3);
+    eluk_led_wmi_set_kbd_zones_level  (0x1);
+    eluk_kbd_rgb_set_logo_effect     = 0x1;
+    eluk_kbd_rgb_set_logo_level      = 0x0;
+    eluk_kbd_rgb_set_trunk_effect    = 0x3;
+    eluk_kbd_rgb_set_trunk_level     = 0x1;
+    strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
+    return strlen(buffer);
+}
+
+static int eluk_led_wmi_rgb_breathing_100(char *buffer, const struct kernel_param *kp)
+{
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect (0x3);
+    eluk_led_wmi_set_kbd_zones_level  (0x2);
+    eluk_kbd_rgb_set_logo_effect     = 0x1;
+    eluk_kbd_rgb_set_logo_level      = 0x0;
+    eluk_kbd_rgb_set_trunk_effect    = 0x3;
+    eluk_kbd_rgb_set_trunk_level     = 0x2;
+    strcpy(buffer, (eluk_led_wmi_colors_commit_all(NULL, NULL)>0?"1\n":"0\n"));
+    return strlen(buffer);
+}
+
+static int eluk_led_wmi_get_logo_a3(void)
+{
+    return BITWISE_A3(eluk_kbd_rgb_set_logo_effect, eluk_kbd_rgb_set_logo_level, eluk_kbd_rgb_set_logo_color);
+}
+static int eluk_led_wmi_get_trunk_a3(void)
+{
+    return BITWISE_A3(eluk_kbd_rgb_set_trunk_effect, eluk_kbd_rgb_set_trunk_level, eluk_kbd_rgb_set_trunk_color);
+}
+static int eluk_led_wmi_get_right_a3(void)
+{
+    return BITWISE_A3(eluk_kbd_rgb_set_right_effect, eluk_kbd_rgb_set_right_level, eluk_kbd_rgb_set_right_color);
+}
+static int eluk_led_wmi_get_centre_a3(void)
+{
+    return BITWISE_A3(eluk_kbd_rgb_set_cntr_effect, eluk_kbd_rgb_set_cntr_level, eluk_kbd_rgb_set_cntr_color);
+}
+static int eluk_led_wmi_get_left_a3(void)
+{
+    return BITWISE_A3(eluk_kbd_rgb_set_left_effect, eluk_kbd_rgb_set_left_level, eluk_kbd_rgb_set_left_color);
+}
+
+#define APPLY_SETTINGS(SETTINGS, COUNT, BUFFER) \
+    int status = 0; \
+    if((status = eluk_led_wmi_set_value_exec(SETTINGS, COUNT)) > 0 && BUFFER != NULL) { \
+        strcpy(BUFFER, "failure\n"); \
+    } else if (BUFFER != NULL) { \
+        strcpy(BUFFER, "success\n"); \
+    } \
+    return (BUFFER!=NULL?strlen(BUFFER):status)
+
+static int eluk_led_wmi_colors_commit_all(char *buffer, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
     union wmi_setting settings[5] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
-        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_set_logo_alpha  << 24) + eluk_kbd_rgb_set_logo_color),
+        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = eluk_led_wmi_get_logo_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
-        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_set_trunk_alpha << 24) + eluk_kbd_rgb_set_trunk_color),
+        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = eluk_led_wmi_get_trunk_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
-        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_set_right_alpha  << 24) + eluk_kbd_rgb_set_right_color),
+        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = eluk_led_wmi_get_right_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led2 - centre
-        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_rgb_set_cntr_alpha  << 24) + eluk_kbd_rgb_set_cntr_color),
+        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = eluk_led_wmi_get_centre_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led1 - left
-        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_set_left_alpha << 24) + eluk_kbd_rgb_set_left_color),
+        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = eluk_led_wmi_get_left_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, 
     };
 
-#if defined(ELUK_DEBUGGING)
-    if(val != NULL && val[0] == 'a')
-    {
-        pr_info("Fake commit! Verify the created:\n");
-        quanta_evt_cb_buf(32, create_struct->bytes);
-        pr_info("Fake commit! Verify against the original:\n");
-        quanta_evt_cb_buf(32, solid_50_union->bytes);
-        return 0;
-    }
-#endif
-    return eluk_led_wmi_set_value_exec(settings, 5);
+    // Run it.
+    APPLY_SETTINGS(settings, 5, buffer); // returns
 }
 
-static int eluk_led_wmi_colors_commit_kbd(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_colors_commit_kbd(char *buffer, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
     union wmi_setting settings[3] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led3 - right
-        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = ((eluk_kbd_rgb_set_right_alpha  << 24) + eluk_kbd_rgb_set_right_color),
+        .a2 = ELUK_WMI_LED_ZONE_RIGHT,   .a3 = eluk_led_wmi_get_right_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led2 - centre
-        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = ((eluk_kbd_rgb_set_cntr_alpha  << 24) + eluk_kbd_rgb_set_cntr_color),
+        .a2 = ELUK_WMI_LED_ZONE_CENTRE,  .a3 = eluk_led_wmi_get_centre_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // led1 - left
-        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_set_left_alpha << 24) + eluk_kbd_rgb_set_left_color),
+        .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = eluk_led_wmi_get_left_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 },
     };
-    return eluk_led_wmi_set_value_exec(settings, 3);
+
+    // Run it.
+    APPLY_SETTINGS(settings, 3, buffer); // returns
 }
 
-static int eluk_led_wmi_colors_commit_trunk(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_colors_commit_trunk(char *buffer, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
     union wmi_setting settings[1] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // logo/trunk?
-        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = ((eluk_kbd_rgb_set_trunk_alpha << 24) + eluk_kbd_rgb_set_trunk_color),
+        .a2 = ELUK_WMI_LED_ZONE_TRUNK,   .a3 = eluk_led_wmi_get_trunk_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
     };
-    return eluk_led_wmi_set_value_exec(settings, 1);
+
+    // Run it.
+    APPLY_SETTINGS(settings, 1, buffer); // returns
 }
 
-static int eluk_led_wmi_colors_commit_logo(const char *val, const struct kernel_param *kp)
+static int eluk_led_wmi_colors_commit_logo(char *buffer, const struct kernel_param *kp)
 {
     // If this is reached, launch commit. The input is not important.
     union wmi_setting settings[1] = {
     {.a0_op = QUANTA_WMI_MAGIC_SET_OP,   .a1_tgt = QUANTA_WMI_MAGIC_SET_ARG_LED, // trunk/logo?
-        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = ((eluk_kbd_rgb_set_logo_alpha  << 24) + eluk_kbd_rgb_set_logo_color),
+        .a2 = ELUK_WMI_LED_ZONE_LOGO,    .a3 = eluk_led_wmi_get_logo_a3(),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }
     };
-    return eluk_led_wmi_set_value_exec(settings, 1);
+    // Run it.
+    APPLY_SETTINGS(settings, 1, buffer); // returns
 }
 
 module_wmi_driver(eluk_led_wmi_driver);
@@ -379,108 +442,129 @@ MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on 
 MODULE_VERSION("0.0.2");
 MODULE_LICENSE("GPL");
 
+// Readonly perm macros
+#define PERM_RO       (S_IRUSR | S_IRGRP | S_IROTH)
+#define PERM_RO_ADMIN (S_IRUSR | S_IRGRP)
+
 // section: preset ops
 static const struct kernel_param_ops eluk_kbd_preset_offline_ops = {
-    .set    = eluk_led_wmi_rgb_offline,
-    .get    = NULL,
+    .get    = eluk_led_wmi_rgb_offline,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_offline, &eluk_kbd_preset_offline_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_preset_offline, &eluk_kbd_preset_offline_ops, NULL, PERM_RO);
 MODULE_PARM_DESC(eluk_kbd_rgb_preset_offline, "Apply 0-out RGB driver preset.");
 
 static const struct kernel_param_ops eluk_kbd_preset_solid_50_ops = {
-    .set    = eluk_led_wmi_rgb_solid_50,
-    .get    = NULL,
+    .get    = eluk_led_wmi_rgb_solid_50,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_solid_50, &eluk_kbd_preset_solid_50_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_preset_solid_50, &eluk_kbd_preset_solid_50_ops, NULL, PERM_RO);
 MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_50, "Apply Solid Half Brightness RGB driver preset.");
  
 static const struct kernel_param_ops eluk_kbd_preset_solid_100_ops = {
-    .set    = eluk_led_wmi_rgb_solid_100,
-    .get    = NULL,
+    .get    = eluk_led_wmi_rgb_solid_100,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_solid_100, &eluk_kbd_preset_solid_100_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_preset_solid_100, &eluk_kbd_preset_solid_100_ops, NULL, PERM_RO);
 MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_100, "Apply Solid Full Brightness RGB driver preset.");
 
 static const struct kernel_param_ops eluk_kbd_preset_breathing_50_ops = {
-    .set    = eluk_led_wmi_rgb_breathing_50,
-    .get    = NULL,
+    .get    = eluk_led_wmi_rgb_breathing_50,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_breathing_50, &eluk_kbd_preset_breathing_50_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_preset_breathing_50, &eluk_kbd_preset_breathing_50_ops, NULL, PERM_RO);
 MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_50, "Apply Breathing Half Brightness RGB driver preset.");
  
 static const struct kernel_param_ops eluk_kbd_preset_breathing_100_ops = {
-    .set    = eluk_led_wmi_rgb_breathing_100,
-    .get    = NULL,
+    .get    = eluk_led_wmi_rgb_breathing_100,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_preset_breathing_100, &eluk_kbd_preset_breathing_100_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_preset_breathing_100, &eluk_kbd_preset_breathing_100_ops, NULL, PERM_RO);
 MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_100, "Apply Breathing Full Brightness RGB driver preset.");
 // endsection: preset ops
 
 // section: Zone Colors
-module_param(eluk_kbd_rgb_set_logo_color, uint, S_IWUSR | S_IWGRP );
+module_param(eluk_kbd_rgb_set_logo_color, uint, S_IWUSR | S_IWGRP);
 MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_color, "Color for the Logo.");
 
-module_param(eluk_kbd_rgb_set_trunk_color, uint, S_IWUSR | S_IWGRP );
+module_param(eluk_kbd_rgb_set_trunk_color, uint, S_IWUSR | S_IWGRP);
 MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_color, "Color for the Trunk.");
 
-module_param(eluk_kbd_rgb_set_left_color, uint, S_IWUSR | S_IWGRP );
+module_param(eluk_kbd_rgb_set_left_color, uint, S_IWUSR | S_IWGRP);
 MODULE_PARM_DESC(eluk_kbd_rgb_set_left_color, "Color for the Left.");
 
-module_param(eluk_kbd_rgb_set_cntr_color, uint, S_IWUSR | S_IWGRP );
+module_param(eluk_kbd_rgb_set_cntr_color, uint, S_IWUSR | S_IWGRP);
 MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_color, "Color for the Center.");
 
-module_param(eluk_kbd_rgb_set_right_color, uint, S_IWUSR | S_IWGRP );
+module_param(eluk_kbd_rgb_set_right_color, uint, S_IWUSR | S_IWGRP);
 MODULE_PARM_DESC(eluk_kbd_rgb_set_right_color, "Color for the Right.");
 // endsection: Zone Colors
 
 
 // section: Effect/Brightness Setting
 // TODO: can these be made smaller my lord.
-module_param(eluk_kbd_rgb_set_logo_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_alpha, "Effect / Brightness for the Logo.");
+module_param(eluk_kbd_rgb_set_logo_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_effect, "Effect for the Logo.");
 
-module_param(eluk_kbd_rgb_set_trunk_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_alpha, "Effect / Brightness for the Trunk.");
+module_param(eluk_kbd_rgb_set_trunk_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_effect, "Effect for the Trunk.");
 
-module_param(eluk_kbd_rgb_set_left_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_set_left_alpha, "Effect / Brightness for the Left.");
+module_param(eluk_kbd_rgb_set_left_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_left_effect, "Effect for the Left.");
 
-module_param(eluk_kbd_rgb_set_cntr_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_alpha, "Effect / Brightness for the Center.");
+module_param(eluk_kbd_rgb_set_cntr_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_effect, "Effect for the Center.");
 
-module_param(eluk_kbd_rgb_set_right_alpha, int, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_set_right_alpha, "Effect / Brightness for the Right.");
+module_param(eluk_kbd_rgb_set_right_effect, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_right_effect, "Effect for the Right.");
+
+// --
+
+module_param(eluk_kbd_rgb_set_logo_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_logo_level, "Brightness for the Logo.");
+
+module_param(eluk_kbd_rgb_set_trunk_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_trunk_level, "Brightness for the Trunk.");
+
+module_param(eluk_kbd_rgb_set_left_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_left_level, "Brightness for the Left.");
+
+module_param(eluk_kbd_rgb_set_cntr_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_cntr_level, "Brightness for the Center.");
+
+module_param(eluk_kbd_rgb_set_right_level, int, S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(eluk_kbd_rgb_set_right_level, "Brightness for the Right.");
 // endsection: Effect/Brightness Setting
 
 
 // section: commit ops
 static const struct kernel_param_ops eluk_commit_all_ops = {
-    .set    = eluk_led_wmi_colors_commit_all,
-    .get    = NULL,
+    .get    = eluk_led_wmi_colors_commit_all,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_all, &eluk_commit_all_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_commit_all, &eluk_commit_all_ops, NULL, PERM_RO_ADMIN);
 MODULE_PARM_DESC(eluk_kbd_rgb_commit_all, "Commit all colors and mode setup to WMI.");
 
 static const struct kernel_param_ops eluk_commit_kbd_ops = {
-    .set    = eluk_led_wmi_colors_commit_kbd,
-    .get    = NULL,
+    .get    = eluk_led_wmi_colors_commit_kbd,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_kbd, &eluk_commit_kbd_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_commit_kbd, &eluk_commit_kbd_ops, NULL, PERM_RO_ADMIN);
 MODULE_PARM_DESC(eluk_kbd_rgb_commit_kbd, "Commit keyboard colors and mode setup to WMI.");
 
 static const struct kernel_param_ops eluk_commit_trunk_ops = {
-    .set    = eluk_led_wmi_colors_commit_trunk,
-    .get    = NULL,
+    .get    = eluk_led_wmi_colors_commit_trunk,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_trunk, &eluk_commit_trunk_ops, NULL, S_IWUSR | S_IWGRP );
+module_param_cb(eluk_kbd_rgb_commit_trunk, &eluk_commit_trunk_ops, NULL, PERM_RO_ADMIN);
 MODULE_PARM_DESC(eluk_kbd_rgb_commit_trunk, "Commit trunk colors and mode setup to WMI.");
 
 // Unused on Eluktronics
 static const struct kernel_param_ops eluk_commit_logo_ops = {
-    .set    = eluk_led_wmi_colors_commit_logo,
-    .get    = NULL,
+    .get    = eluk_led_wmi_colors_commit_logo,
+    .set    = NULL,
 };
-module_param_cb(eluk_kbd_rgb_commit_logo, &eluk_commit_logo_ops, NULL, S_IWUSR | S_IWGRP  );
+module_param_cb(eluk_kbd_rgb_commit_logo, &eluk_commit_logo_ops, NULL, PERM_RO_ADMIN);
 MODULE_PARM_DESC(eluk_kbd_rgb_commit_logo, "Commit logo colors and mode setup to WMI.");
 // endsection: commit ops
 

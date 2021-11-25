@@ -51,27 +51,36 @@
 
 // Module-wide values for setting. Has "original" unset default values
 
-// Default Color Settings
-static uint eluk_kbd_rgb_set_logo_color  = 0x00FFFF; // Default: Nani
-static uint eluk_kbd_rgb_set_trunk_color = 0x00FFFF; // Default: Nani
-static uint eluk_kbd_rgb_set_left_color  = 0xFF0000; // Default: Red
-static uint eluk_kbd_rgb_set_cntr_color  = 0x00FF00; // Default: Green
-static uint eluk_kbd_rgb_set_right_color = 0x0000FF; // Default: Blue
+// section: Defaults
 
-// Default Effect / Intensity Settings. use << 5? - issue is the base storage is too big argh
-// << 28
-static uint eluk_kbd_rgb_set_logo_effect  = 0x1; // Default: Online? to check
-static uint eluk_kbd_rgb_set_trunk_effect = 0x1; // Default: Online? to check
-static uint eluk_kbd_rgb_set_left_effect  = 0x1; // Default: 100%
-static uint eluk_kbd_rgb_set_cntr_effect  = 0x1; // Default: 100%
-static uint eluk_kbd_rgb_set_right_effect = 0x1; // Default: 100%
+/**********************************************************
+ *
+ * These default values imitate original vendor settings.
+ *
+ **********************************************************/
 
-// << 24
-static uint eluk_kbd_rgb_set_logo_level  = 0x0; // Default: Online? to check
-static uint eluk_kbd_rgb_set_trunk_level = 0x2; // Default: Online? to check
-static uint eluk_kbd_rgb_set_left_level  = 0x2; // Default: 100%
-static uint eluk_kbd_rgb_set_cntr_level  = 0x2; // Default: 100%
-static uint eluk_kbd_rgb_set_right_level = 0x2; // Default: 100%
+// Default Colors
+static uint eluk_kbd_rgb_set_logo_color   = 0x00FFFF; // Default: Teal
+static uint eluk_kbd_rgb_set_trunk_color  = 0x00FFFF; // Default: Teal
+static uint eluk_kbd_rgb_set_left_color   = 0xFF0000; // Default: Red
+static uint eluk_kbd_rgb_set_cntr_color   = 0x00FF00; // Default: Green
+static uint eluk_kbd_rgb_set_right_color  = 0x0000FF; // Default: Blue
+
+// Default Effect    ( << 28 )
+static uint eluk_kbd_rgb_set_logo_effect  = 0x1;      // Default: Online? to check
+static uint eluk_kbd_rgb_set_trunk_effect = 0x1;      // Default: Online? to check
+static uint eluk_kbd_rgb_set_left_effect  = 0x1;      // Default: 100%
+static uint eluk_kbd_rgb_set_cntr_effect  = 0x1;      // Default: 100%
+static uint eluk_kbd_rgb_set_right_effect = 0x1;      // Default: 100%
+
+// Default Intensity ( << 24 )
+static uint eluk_kbd_rgb_set_logo_level  = 0x0;       // Default: Online? to check
+static uint eluk_kbd_rgb_set_trunk_level = 0x1;       // Default: 50%
+static uint eluk_kbd_rgb_set_left_level  = 0x1;       // Default: 50%
+static uint eluk_kbd_rgb_set_cntr_level  = 0x1;       // Default: 50%
+static uint eluk_kbd_rgb_set_right_level = 0x1;       // Default: 50%
+
+// endsection: Defaults
 
 
 // Commit predefs

@@ -45,6 +45,9 @@
 #include <linux/version.h>
 #include <linux/delay.h>
 #include "eluk-led-wmi.h"
+#include "eluk-shared-wmi.h"
+
+#define ELUK_EXPERIMENTAL
 
 // Bitwise macro to create the color.
 #define BITWISE_A3(X, Y, Z) ((((X << 4) | Y) << 24) | Z)
@@ -213,10 +216,10 @@ static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 #endif
 }
 
+#if defined(ELUK_DEBUGGING)
 void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
 {
     // todo: find a way to make this useful?
-#if defined(ELUK_DEBUGGING)
     u8 qnt_data[b_l];
     int i;
     // THIS WATCHES OVER THE STATE?
@@ -232,8 +235,8 @@ void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
             ((i*8)+6)<b_l?qnt_data[(i*8)+6]:0, ((i*8)+7)<b_l?qnt_data[(i*8)+7]:0
         );
     }
-    #endif
 }
+#endif
 
 static const struct wmi_device_id eluk_led_wmi_device_ids[] = {
     // Listing one should be enough, for a driver that "takes care of all anyways"
@@ -256,24 +259,15 @@ static struct wmi_driver eluk_led_wmi_driver = {
 };
 
 static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
-    struct acpi_buffer input;
-    acpi_status status;
     int iter;
     bool failed = false;
 
     for(iter = 0; ((iter < count) && !failed); iter++) {
-#if defined(ELUK_DEBUGGING)
-        pr_debug("Attempting to set LED colors via WMI.\n");
-#endif
-
-        input.length = (sizeof(u8)*32); // u8 array
-        input.pointer = preset[iter].bytes;
-        status = wmi_set_block(ELUK_WMI_MGMT_GUID_LED_RD_WR, 0, &input);
-        if (ACPI_FAILURE(status)) {
+        // bad, fix this
+        if(eluk_shared_wmi_set_value_exec(preset[iter].bytes, (sizeof(u8)*32)) > 0) {
             pr_info("Write failure. Please report this to the developer.\n");
             failed = true;
         }
-        // No need to read after; this method is only used to set.
     }
     return (failed?1:0);
 }
@@ -471,8 +465,9 @@ module_wmi_driver(eluk_led_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for Quanta-Based Eluktronics WMI interface, based on TUXEDO code");
-MODULE_VERSION("0.0.2");
+MODULE_VERSION("0.0.4");
 MODULE_LICENSE("GPL");
+MODULE_SOFTDEP("pre: eluk-shared-wmi");
 
 // Readonly perm macros
 #define PERM_RO       (S_IRUSR | S_IRGRP | S_IROTH)

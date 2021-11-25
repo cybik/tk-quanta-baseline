@@ -157,5 +157,10 @@ void eluk_led_evt_cb_int(u32 code)
     // NOOP
 }
 
-
+#if !defined(ELUK_DEBUGGING)
+void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
+{
+    // NOOP
+}
+#endif
 #endif

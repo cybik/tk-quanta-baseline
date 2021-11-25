@@ -210,10 +210,6 @@ static struct wmi_driver eluk_led_wmi_driver = {
     .notify      = eluk_led_wmi_notify,
 };
 
-#if 1
-#define RUN_THE_TEST
-#endif
-
 static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
     struct acpi_buffer input;
     acpi_status status;
@@ -337,35 +333,35 @@ static const struct kernel_param_ops eluk_kbd_preset_offline_ops = {
     .get    = NULL,
 };
 module_param_cb(eluk_kbd_rgb_preset_offline, &eluk_kbd_preset_offline_ops, NULL, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_offline, "Trigger testing. Read and Write.");
+MODULE_PARM_DESC(eluk_kbd_rgb_preset_offline, "Apply 0-out RGB driver preset.");
 
 static const struct kernel_param_ops eluk_kbd_preset_solid_50_ops = {
     .set    = eluk_led_wmi_rgb_solid_50,
     .get    = NULL,
 };
 module_param_cb(eluk_kbd_rgb_preset_solid_50, &eluk_kbd_preset_solid_50_ops, NULL, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_50, "Trigger testing. Read and Write.");
+MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_50, "Apply Solid Half Brightness RGB driver preset.");
  
 static const struct kernel_param_ops eluk_kbd_preset_solid_100_ops = {
     .set    = eluk_led_wmi_rgb_solid_100,
     .get    = NULL,
 };
 module_param_cb(eluk_kbd_rgb_preset_solid_100, &eluk_kbd_preset_solid_100_ops, NULL, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_100, "Trigger testing. Read and Write.");
+MODULE_PARM_DESC(eluk_kbd_rgb_preset_solid_100, "Apply Solid Full Brightness RGB driver preset.");
 
 static const struct kernel_param_ops eluk_kbd_preset_breathing_50_ops = {
     .set    = eluk_led_wmi_rgb_breathing_50,
     .get    = NULL,
 };
 module_param_cb(eluk_kbd_rgb_preset_breathing_50, &eluk_kbd_preset_breathing_50_ops, NULL, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_50, "Trigger testing. Read and Write.");
+MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_50, "Apply Breathing Half Brightness RGB driver preset.");
  
 static const struct kernel_param_ops eluk_kbd_preset_breathing_100_ops = {
     .set    = eluk_led_wmi_rgb_breathing_100,
     .get    = NULL,
 };
 module_param_cb(eluk_kbd_rgb_preset_breathing_100, &eluk_kbd_preset_breathing_100_ops, NULL, S_IWUSR | S_IWGRP );
-MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_100, "Trigger testing. Read and Write.");
+MODULE_PARM_DESC(eluk_kbd_rgb_preset_breathing_100, "Apply Breathing Full Brightness RGB driver preset.");
 // endsection: preset ops
 
 // section: Zone Colors

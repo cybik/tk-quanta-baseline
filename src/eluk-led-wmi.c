@@ -72,6 +72,7 @@ struct quanta_interface_t eluk_led_wmi_iface = {
     .string_id = ELUK_LED_IFACE_WMI_STRID,
 };
 
+#if defined(ELUK_DEBUGGING)
 static void eluk_led_wmi_run_query(void)
 {
     acpi_status astatus;
@@ -90,15 +91,14 @@ static void eluk_led_wmi_run_query(void)
         pr_debug("qnwmi:   WMI data :: type %d\n", out_acpi->type);
         if(out_acpi->type == ACPI_TYPE_BUFFER) {
             pr_debug("qnwmi:    WMI data :: type %d :: length %d\n", out_acpi->buffer.type, out_acpi->buffer.length);
-#if 0
             quanta_evt_cb_buf(out_acpi->buffer.length, out_acpi->buffer.pointer);
-#endif
         }
         kfree(out_acpi);
     } else {
         pr_info("qnwmi:   WMI hit failure\n");
     }
 }
+#endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
 static int eluk_led_wmi_probe(struct wmi_device *wdev)
@@ -122,9 +122,11 @@ static int eluk_led_wmi_probe(struct wmi_device *wdev, const void *dummy_context
 
     pr_info("probe: Generic Quanta interface initialized\n");
 
+#if defined(ELUK_DEBUGGING)
     if(wmi_has_guid(ELUK_WMI_MGMT_GUID_LED_RD_WR)) {
         eluk_led_wmi_run_query();
     }
+#endif
     return 0;
 }
 
@@ -134,7 +136,7 @@ static int  eluk_led_wmi_remove(struct wmi_device *wdev)
 static void eluk_led_wmi_remove(struct wmi_device *wdev)
 #endif
 {
-    pr_info("Driver removed. peace out.\n");
+    pr_debug("Quanta/Eluk Driver removed. peace out.\n");
     quanta_remove_interface(ELUK_LED_IFACE_WMI_STRID, &eluk_led_wmi_iface);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0)
     return 0;
@@ -143,9 +145,9 @@ static void eluk_led_wmi_remove(struct wmi_device *wdev)
 
 static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 {
-    pr_info("notify: Generic Quanta interface has received a signal\n");
-    pr_info("notify:  Generic Quanta interface Notify Info:\n");
-    pr_info("notify:   objtype: %d (%0#6x)\n", obj->type, obj->type);
+    pr_debug("notify: Generic Quanta interface has received a signal\n");
+    pr_debug("notify:  Generic Quanta interface Notify Info:\n");
+    pr_debug("notify:   objtype: %d (%0#6x)\n", obj->type, obj->type);
     if (!obj) {
         pr_debug("expected ACPI object doesn't exist\n");
     } else if (obj->type == ACPI_TYPE_INTEGER) {
@@ -172,7 +174,7 @@ static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 void quanta_evt_cb_buf(u8 b_l, u8* b_ptr)
 {
     // todo: find a way to make this useful?
-#if 1
+#if defined(ELUK_DEBUGGING)
     u8 qnt_data[b_l];
     int i;
     // THIS WATCHES OVER THE STATE?
@@ -252,32 +254,49 @@ static void eluk_led_wmi_set_kbd_zones_effect(u8 val)
 
 static int eluk_led_wmi_rgb_offline(const char *val, const struct kernel_param *kp)
 {
-    return eluk_led_wmi_set_value_exec(offline_union, 5);
+    // Set offline, but hard for now. 
+    // TODO: refactor around effect values as well.
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect(0x10);
+    eluk_kbd_rgb_set_logo_alpha     = 0x10;
+    eluk_kbd_rgb_set_trunk_alpha    = 0x10;
+    return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_rgb_solid_50(const char *val, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
     eluk_led_wmi_set_kbd_zones_effect(0x11);
-    eluk_kbd_rgb_set_logo_alpha  = 0x10;
-    eluk_kbd_rgb_set_trunk_alpha = 0x10;
-    eluk_led_wmi_colors_commit_all(NULL, NULL);
-    return eluk_led_wmi_set_value_exec(solid_50_union, 5);
+    eluk_kbd_rgb_set_logo_alpha     = 0x10;
+    eluk_kbd_rgb_set_trunk_alpha    = 0x11;
+    return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_rgb_solid_100(const char *val, const struct kernel_param *kp)
 {
-    return eluk_led_wmi_set_value_exec(solid_100_union, 5);
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect(0x12);
+    eluk_kbd_rgb_set_logo_alpha     = 0x10;
+    eluk_kbd_rgb_set_trunk_alpha    = 0x12;
+    return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_rgb_breathing_50(const char *val, const struct kernel_param *kp)
 {
-    return eluk_led_wmi_set_value_exec(breathing_50_union, 5);
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect(0x31);
+    eluk_kbd_rgb_set_logo_alpha     = 0x10;
+    eluk_kbd_rgb_set_trunk_alpha    = 0x31;
+    return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_rgb_breathing_100(const char *val, const struct kernel_param *kp)
 {
-    return eluk_led_wmi_set_value_exec(breathing_100_union, 5);
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect(0x32);
+    eluk_kbd_rgb_set_logo_alpha     = 0x10;
+    eluk_kbd_rgb_set_trunk_alpha    = 0x32;
+    return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp)
@@ -301,6 +320,7 @@ static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_p
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, 
     };
 
+#if defined(ELUK_DEBUGGING)
     if(val != NULL && val[0] == 'a')
     {
         pr_info("Fake commit! Verify the created:\n");
@@ -309,7 +329,7 @@ static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_p
         quanta_evt_cb_buf(32, solid_50_union->bytes);
         return 0;
     }
-    
+#endif
     return eluk_led_wmi_set_value_exec(create_struct, 5);
 }
 

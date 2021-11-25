@@ -63,7 +63,8 @@ static uint eluk_kbd_rgb_set_left_alpha  = 0x12; // Default: 100%
 static uint eluk_kbd_rgb_set_cntr_alpha  = 0x12; // Default: 100%
 static uint eluk_kbd_rgb_set_right_alpha = 0x12; // Default: 100%
 
-// Baseline unions for now.
+// Commit predefs
+static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_param *kp);
 
 DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
@@ -171,7 +172,7 @@ static void eluk_led_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
 void quanta_evt_cb_buf(u8 b_l, u8* b_ptr)
 {
     // todo: find a way to make this useful?
-#if 0
+#if 1
     u8 qnt_data[b_l];
     int i;
     // THIS WATCHES OVER THE STATE?
@@ -232,6 +233,23 @@ static int eluk_led_wmi_set_value_exec(union wmi_setting *preset, int count) {
     return (failed?1:0);
 }
 
+
+static void eluk_led_wmi_set_default_colors(void)
+{
+    eluk_kbd_rgb_set_logo_color  = 0x00FFFF;
+    eluk_kbd_rgb_set_trunk_color = 0x00FFFF;
+    eluk_kbd_rgb_set_left_color  = 0xFF0000;
+    eluk_kbd_rgb_set_cntr_color  = 0x00FF00;
+    eluk_kbd_rgb_set_right_color = 0x0000FF;
+}
+
+static void eluk_led_wmi_set_kbd_zones_effect(u8 val)
+{
+    eluk_kbd_rgb_set_left_alpha  = val;
+    eluk_kbd_rgb_set_cntr_alpha  = val;
+    eluk_kbd_rgb_set_right_alpha = val;
+}
+
 static int eluk_led_wmi_rgb_offline(const char *val, const struct kernel_param *kp)
 {
     return eluk_led_wmi_set_value_exec(offline_union, 5);
@@ -239,6 +257,11 @@ static int eluk_led_wmi_rgb_offline(const char *val, const struct kernel_param *
 
 static int eluk_led_wmi_rgb_solid_50(const char *val, const struct kernel_param *kp)
 {
+    eluk_led_wmi_set_default_colors();
+    eluk_led_wmi_set_kbd_zones_effect(0x11);
+    eluk_kbd_rgb_set_logo_alpha  = 0x10;
+    eluk_kbd_rgb_set_trunk_alpha = 0x10;
+    eluk_led_wmi_colors_commit_all(NULL, NULL);
     return eluk_led_wmi_set_value_exec(solid_50_union, 5);
 }
 
@@ -277,6 +300,15 @@ static int eluk_led_wmi_colors_commit_all(const char *val, const struct kernel_p
         .a2 = ELUK_WMI_LED_ZONE_LEFT,    .a3 = ((eluk_kbd_rgb_set_left_alpha << 24) + eluk_kbd_rgb_set_left_color),
         .a4 = 0x0, .a5 = 0x0, .a6 = 0x0, .rev0 = 0x0, .rev1 = 0x0 }, 
     };
+
+    if(val != NULL && val[0] == 'a')
+    {
+        pr_info("Fake commit! Verify the created:\n");
+        quanta_evt_cb_buf(32, create_struct->bytes);
+        pr_info("Fake commit! Verify against the original:\n");
+        quanta_evt_cb_buf(32, solid_50_union->bytes);
+        return 0;
+    }
     
     return eluk_led_wmi_set_value_exec(create_struct, 5);
 }

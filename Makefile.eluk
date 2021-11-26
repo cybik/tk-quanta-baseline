@@ -52,20 +52,23 @@ DEB_PACKAGE_NAME := $(MODULE_NAME)-$(VER)
 
 # Deb package folder variables
 DEB_PACKAGE_BASE := deb/$(DEB_PACKAGE_NAME)
-DEB_PACKAGE_SRC := $(DEB_PACKAGE_BASE)/usr/src/$(DEB_PACKAGE_NAME)
+DEB_PACKAGE_SRC  := $(DEB_PACKAGE_BASE)/usr/src/$(DEB_PACKAGE_NAME)
+DEB_PACKAGE_UDEV := $(DEB_PACKAGE_BASE)/etc/udev.d/rules/
 DEB_PACKAGE_CTRL := $(DEB_PACKAGE_BASE)/DEBIAN
 
 package: package-deb package-rpm
 package-clean: package-deb-clean package-rpm-clean
+package-deb-nice: package-deb package-deb-cleanup
 
 package-deb:
 	# Create/complete folder structure according to current version
 	rm -rf $(DEB_PACKAGE_BASE) || true
 	cp -rf deb/module-name-eluk $(DEB_PACKAGE_BASE)
-	mv $(DEB_PACKAGE_BASE)/usr/share/doc/module-name-eluk $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)
+	mv $(DEB_PACKAGE_BASE)/usr/share/doc/module-name $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)
 	mkdir -p $(DEB_PACKAGE_BASE)/usr/src || true
 	mkdir -p $(DEB_PACKAGE_SRC) || true
 	mkdir -p $(DEB_PACKAGE_BASE)/usr/share/$(MODULE_NAME) || true
+	mkdir -p $(DEB_PACKAGE_UDEV) || true
 
 	# Replace name/version numbers in control/script files
 	sed -i 's/^Version:[^\n]*/Version: $(VER)/g' $(DEB_PACKAGE_CTRL)/control
@@ -78,12 +81,14 @@ package-deb:
 	cp -rf dkms.conf $(DEB_PACKAGE_SRC)
 	cp -rf Makefile $(DEB_PACKAGE_SRC)
 	cp -rf src $(DEB_PACKAGE_SRC)
+	cp -rf src_pkg/90_eluk_wmi.rules $(DEB_PACKAGE_UDEV)
 	cp -rf src_pkg/dkms_postinst $(DEB_PACKAGE_BASE)/usr/share/$(MODULE_NAME)/postinst
 	# Make sure files and folders have acceptable permissions
 	chmod -R 755 $(DEB_PACKAGE_CTRL)
 	chmod 644 $(DEB_PACKAGE_CTRL)/control
 	find deb/$(DEB_PACKAGE_NAME)/usr -type d -exec chmod 755 {} \;
 	find deb/$(DEB_PACKAGE_NAME)/usr -type f -exec chmod 644 {} \;
+	find $(DEB_PACKAGE_UDEV) -type f -exec chmod 644 {} \;
 	chmod 755 $(DEB_PACKAGE_BASE)/usr/share/$(MODULE_NAME)/postinst
 	
 	gunzip $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)/changelog.gz
@@ -92,14 +97,18 @@ package-deb:
 	# Make deb package
 	dpkg-deb --root-owner-group -b $(DEB_PACKAGE_BASE) $(DEB_PACKAGE_NAME).deb
 
-package-deb-clean:
+package-deb-cleanup:
 	rm -rf deb/$(MODULE_NAME)-* > /dev/null 2>&1 || true
+
+package-deb-clean: package-deb-cleanup
 	rm *.deb > /dev/null 2>&1 || true
 
 RPM_PACKAGE_NAME := $(MODULE_NAME)-$(VER)
 RPM_PACKAGE_SRC := rpm/SOURCES/$(RPM_PACKAGE_NAME)
 RPM_SPEC := rpm/SPECS/$(MODULE_NAME).spec
 RELEASE := 1
+
+package-rpm-nice: package-rpm package-rpm-cleanup
 
 package-rpm:
 	# Create folder source structure according to current version
@@ -113,6 +122,7 @@ package-rpm:
 	sed -i 's/^Version:[^\n]*/Version:        $(VER)/g' $(RPM_SPEC)
 	sed -i 's/^Release:[^\n]*/Release:        $(RELEASE)/g' $(RPM_SPEC)
 	# Copy source
+	cp -rf src_pkg/90_eluk_wmi.rules $(RPM_PACKAGE_SRC)
 	cp -rf dkms.eluk.conf $(RPM_PACKAGE_SRC)/dkms.conf
 	cp -rf Makefile.eluk $(RPM_PACKAGE_SRC)/Makefile
 	cp -rf src/eluk* src/quanta* $(RPM_PACKAGE_SRC)
@@ -125,6 +135,7 @@ package-rpm:
 	# Copy built package
 	cp rpm/RPMS/noarch/*.rpm .
 
-package-rpm-clean:
+package-rpm-cleanup:
 	rm -rf rpm > /dev/null 2>&1 || true
+package-rpm-clean: package-rpm-cleanup
 	rm *.rpm > /dev/null 2>&1 || true

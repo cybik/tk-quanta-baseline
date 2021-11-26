@@ -78,8 +78,9 @@ package-deb:
 	sed -i 's/^version=[^\n]*/version=$(VER)/g' $(DEB_PACKAGE_CTRL)/prerm
 	sed -i 's/^module=[^\n]*/module=$(MODULE_NAME)/g' $(DEB_PACKAGE_CTRL)/prerm
 	# Copy source
-	cp -rf dkms.conf $(DEB_PACKAGE_SRC)
-	cp -rf Makefile $(DEB_PACKAGE_SRC)
+	cp -rf dkms.eluk.conf $(DEB_PACKAGE_SRC)
+	bash -c 'cd $(DEB_PACKAGE_SRC); ln -s dkms.eluk.conf dkms.conf'
+	cp -rf Makefile.eluk $(DEB_PACKAGE_SRC)/Makefile
 	cp -rf src $(DEB_PACKAGE_SRC)
 	cp -rf src_pkg/90_eluk_wmi.rules $(DEB_PACKAGE_UDEV)
 	cp -rf src_pkg/dkms_postinst $(DEB_PACKAGE_BASE)/usr/share/$(MODULE_NAME)/postinst
@@ -123,7 +124,8 @@ package-rpm:
 	sed -i 's/^Release:[^\n]*/Release:        $(RELEASE)/g' $(RPM_SPEC)
 	# Copy source
 	cp -rf src_pkg/90_eluk_wmi.rules $(RPM_PACKAGE_SRC)
-	cp -rf dkms.eluk.conf $(RPM_PACKAGE_SRC)/dkms.conf
+	cp -rf dkms.eluk.conf $(RPM_PACKAGE_SRC)
+	bash -c 'cd $(RPM_PACKAGE_SRC); ln -s dkms.eluk.conf dkms.conf'
 	cp -rf Makefile.eluk $(RPM_PACKAGE_SRC)/Makefile
 	cp -rf src/eluk* src/quanta* $(RPM_PACKAGE_SRC)
 	cp -rf LICENSE $(RPM_PACKAGE_SRC)

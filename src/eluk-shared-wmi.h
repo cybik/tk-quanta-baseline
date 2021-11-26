@@ -70,7 +70,7 @@ u32 eluk_shared_add_interface(const char* name, struct eluk_shared_interface_t *
 u32 eluk_shared_remove_interface(const char* name, struct eluk_shared_interface_t *interface);
 u32 eluk_shared_get_active_interface_id(char **id_str);
 
-int eluk_shared_wmi_set_value_exec(void *bytes, int size);
+int eluk_shared_wmi_set_value(void *bytes, int size);
 eluk_shared_evt_cb_int_t eluk_shared_evt_cb_int;
 eluk_shared_evt_cb_buf_t eluk_shared_evt_cb_buf;
 

@@ -193,7 +193,7 @@ static struct wmi_driver eluk_shared_wmi_driver = {
     .notify      = eluk_shared_wmi_notify,
 };
 
-int eluk_shared_wmi_set_value_exec(void *bytes, int size) {
+int eluk_shared_wmi_set_value(void *bytes, int size) {
     struct acpi_buffer input;
     acpi_status status;
 
@@ -207,7 +207,7 @@ int eluk_shared_wmi_set_value_exec(void *bytes, int size) {
     }
     return 0;
 }
-EXPORT_SYMBOL(eluk_shared_wmi_set_value_exec);
+EXPORT_SYMBOL(eluk_shared_wmi_set_value);
 
 module_wmi_driver(eluk_shared_wmi_driver);
 

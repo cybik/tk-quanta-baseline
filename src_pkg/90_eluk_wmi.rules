@@ -1,0 +1,2 @@
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod -R o+w /sys/bus/wmi/drivers/%k/module/parameters/"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod o-w /sys/bus/wmi/drivers/%k/module/parameters"

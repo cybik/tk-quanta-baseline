@@ -213,8 +213,9 @@ module_wmi_driver(eluk_shared_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");
-MODULE_VERSION("0.0.4");
+MODULE_VERSION("0.0.5");
 MODULE_LICENSE("GPL");
+MODULE_SOFTDEP("post: eluk-shared-wmi");
 
 MODULE_DEVICE_TABLE(wmi, eluk_shared_wmi_device_ids);
 MODULE_ALIAS_ELUK_SHARED_WMI();

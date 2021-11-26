@@ -6,7 +6,7 @@ In no particular order, these are code-found todos I need to open issues about
   * I can't pretend to know all variants of the hardware, so there may be other hardware
     that uses these GUIDs
     * Lock down the driver so it targets only the Prometheus XVI at this time
-    * Change the name to eluk-pxvi-XXX
+    * ~~Change the name to eluk-pxvi-XXX~~
 * Build Automation
   * Automated deb generation
   * Maybe automated rpm generation too?

@@ -54,7 +54,7 @@
     MODULE_ALIAS("wmi:" ELUK_WMI_MGMT_GUID_LED_RD_WR); \
     MODULE_ALIAS("wmi:" ELUK_WMI_EVNT_GUID_MESG_MNTR);
 
-#define ELUK_LED_IFACE_WMI_STRID "eluk-led-wmi"
+#define ELUK_LED_IFACE_WMI_STRID "eluk-pxvi-led-wmi"
 
 // Zones
 #define ELUK_WMI_LED_ZONE_LOGO             0x8 // FIX : Unused on Eluktronics

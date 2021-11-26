@@ -40,7 +40,7 @@
 #ifndef ELUK_SHARED_DEFS_INTERFACES_H
 #define ELUK_SHARED_DEFS_INTERFACES_H
 
-#include "eluk-shared-wmi.h"
+#include "eluk-pxvi-shared-wmi.h"
 
 static struct eluk_shared_interfaces_t {
     struct eluk_shared_interface_t *wmi;

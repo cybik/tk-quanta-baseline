@@ -44,7 +44,7 @@
 #include <linux/wmi.h>
 #include <linux/version.h>
 #include <linux/delay.h>
-#include "eluk-shared-defs-wmi.h"
+#include "eluk-pxvi-shared-defs-wmi.h"
 
 // Module-wide values for setting. Has "original" unset default values
 struct eluk_shared_interface_t eluk_shared_wmi_iface = {
@@ -215,7 +215,7 @@ MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");
 MODULE_VERSION("0.0.5");
 MODULE_LICENSE("GPL");
-MODULE_SOFTDEP("post: eluk-shared-wmi");
+MODULE_SOFTDEP("post: eluk-pxvi-led-wmi");
 
 MODULE_DEVICE_TABLE(wmi, eluk_shared_wmi_device_ids);
 MODULE_ALIAS_ELUK_SHARED_WMI();

@@ -44,9 +44,9 @@ case "$1" in
 
         # Attempt to (re-)load module immediately, fail silently if not possible at this stage
         echo "(Re)load modules if possible"
-        rmmod eluk-led-wmi > /dev/null 2>&1 || true
+        rmmod eluk-pxvi-led-wmi > /dev/null 2>&1 || true
         
-        modprobe eluk-led-wmi > /dev/null 2>&1 || true
+        modprobe eluk-pxvi-led-wmi > /dev/null 2>&1 || true
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -44,8 +44,8 @@
 #include <linux/wmi.h>
 #include <linux/version.h>
 #include <linux/delay.h>
-#include "eluk-led-wmi.h"
-#include "eluk-shared-wmi.h"
+#include "eluk-pxvi-led-wmi.h"
+#include "eluk-pxvi-shared-wmi.h"
 
 #define ELUK_EXPERIMENTAL
 
@@ -456,7 +456,7 @@ MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("LED functions for the Eluktronics Prometheus XVI WMI interface");
 MODULE_VERSION("0.0.5");
 MODULE_LICENSE("GPL");
-MODULE_SOFTDEP("pre: eluk-shared-wmi");
+MODULE_SOFTDEP("pre: eluk-pxvi-shared-wmi");
 
 // Readonly perm macros
 #define PERM_RW_ADMIN (S_IWUSR | S_IWGRP)

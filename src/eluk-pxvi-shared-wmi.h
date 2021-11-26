@@ -53,7 +53,7 @@
     MODULE_ALIAS("wmi:" ELUK_WMI_MGMT_GUID_LED_RD_WR); \
     MODULE_ALIAS("wmi:" ELUK_WMI_EVNT_GUID_MESG_MNTR);
 
-#define ELUK_SHARED_IFACE_WMI_STRID "eluk-shared-wmi"
+#define ELUK_SHARED_IFACE_WMI_STRID "eluk-pxvi-shared-wmi"
 
 //#define ELUK_DEBUGGING 1
 

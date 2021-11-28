@@ -1,2 +1,12 @@
 SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod -R o+w /sys/bus/wmi/drivers/%k/module/parameters/"
 SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod o-w /sys/bus/wmi/drivers/%k/module/parameters"
+
+# Commit ops specifically, as udev dislikes wildcards in run.
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_commit_all"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_commit_kbd"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_commit_logo"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_commit_trunk"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_pretend_commit_all"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_pretend_commit_kbd"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_pretend_commit_logo"
+SUBSYSTEM=="drivers", DEVPATH=="/bus/wmi/drivers/eluk-pxvi-led-wmi", ACTION=="add", RUN+="/usr/bin/chmod 444 /sys/bus/wmi/drivers/%k/module/parameters/rgb_pretend_commit_trunk"

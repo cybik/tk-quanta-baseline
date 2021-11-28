@@ -28,17 +28,8 @@ This is research-type data to *develop* Linux support for hardware. It is not in
 
 # Data
 
-Note that these values correspond:
-
-* `0xFA00 == 64000`
-* `0xFB00 == 64256`
-* `0x0100 ==   256`
-* `0x0200 ==   512`
-* `0x0201 ==   513`
-* `0x0300 ==   768`
-
-Hex are regularly used in coding, but the decompile showed decimal units, so when
-looking at decomp, look for the decimal values above.
+Note that `0xFA00 == 64000` and `0xFB00 == 64256`. Hex are regularly used in coding, but the decompile
+showed decimal units, so when looking at decomp, look for the decimal values above.
 
 |Operation|Settings|Outcome|Notes|
 |--- |--- |--- |--- |

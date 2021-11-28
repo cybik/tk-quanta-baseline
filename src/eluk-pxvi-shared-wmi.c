@@ -213,7 +213,7 @@ module_wmi_driver(eluk_shared_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");
-MODULE_VERSION("0.0.5");
+MODULE_VERSION("0.0.6");
 MODULE_LICENSE("GPL");
 MODULE_SOFTDEP("post: eluk-pxvi-led-wmi");
 

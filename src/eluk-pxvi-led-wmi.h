@@ -59,9 +59,9 @@
 // Zones
 #define ELUK_WMI_LED_ZONE_LOGO             0x8 // FIX : Unused on Eluktronics
 #define ELUK_WMI_LED_ZONE_TRUNK            0x7
-#define ELUK_WMI_LED_ZONE_LEFT             0x5
-#define ELUK_WMI_LED_ZONE_CENTRE           0x4
 #define ELUK_WMI_LED_ZONE_RIGHT            0x3
+#define ELUK_WMI_LED_ZONE_CENTRE           0x4
+#define ELUK_WMI_LED_ZONE_LEFT             0x5
 
 // Off/Half/Full
 #define ELUK_WMI_LED_BRIGHT_NONE           0x0
@@ -76,7 +76,8 @@
 
 //#define ELUK_WMI_LED_BREF_
 
-//#define ELUK_DEBUGGING 1
+//#define ELUK_DEBUGGING
+#define ELUK_BUF_LOGGING
 
 typedef void (eluk_led_evt_cb_int_t)(u32);
 typedef void (eluk_led_evt_cb_buf_t)(u8, u8*);
@@ -157,7 +158,7 @@ void eluk_led_evt_cb_int(u32 code)
     // NOOP
 }
 
-#if !defined(ELUK_DEBUGGING)
+#if !defined(ELUK_BUF_LOGGING)
 void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
 {
     // NOOP

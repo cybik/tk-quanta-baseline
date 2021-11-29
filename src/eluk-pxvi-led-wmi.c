@@ -87,7 +87,10 @@ static uint rgb_right_level  = 0x1;       // Default: 50%
 
 
 // Commit predefs
-static int eluk_led_wmi_colors_commit_all(char *, const struct kernel_param *);
+static int eluk_led_wmi_colors_commit_all  (char *, const struct kernel_param *);
+static int eluk_led_wmi_colors_commit_kbd  (char *, const struct kernel_param *);
+static int eluk_led_wmi_colors_commit_logo (char *, const struct kernel_param *);
+static int eluk_led_wmi_colors_commit_trunk(char *, const struct kernel_param *);
 
 //DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
@@ -298,6 +301,21 @@ static void eluk_led_wmi_set_default_colors(void)
     rgb_right_color  = 0x0000FF;
 }
 
+static void eluk_led_wmi_set_ambi_colors(u8 level)
+{
+    //rgb_logo_color   = 0x00FFFF;
+    //rgb_trunk_color  = 0x00FFFF;
+    rgb_left_color     = rgb_cntr_color
+                       = rgb_right_color
+                       = ELUK_WMI_LED_COLOR_AMBIENT;
+    rgb_left_effect    = rgb_cntr_effect
+                       = rgb_right_effect
+                       = ELUK_WMI_LED_EFFECT_AMBIENT;
+    rgb_left_level     = rgb_cntr_level
+                       = rgb_right_level
+                       = level;
+}
+
 static void eluk_led_wmi_set_kbd_zones_effect(u8 val)
 {
     rgb_left_effect  =      val;
@@ -316,61 +334,73 @@ static int eluk_led_wmi_offline(const char *buffer, const struct kernel_param *k
 {
     // Set offline, but hard for now.
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect (0x1);
-    eluk_led_wmi_set_kbd_zones_level  (0x0);
-    rgb_logo_effect     = 0x1;
-    rgb_logo_level      = 0x0;
-    rgb_trunk_effect    = 0x1;
-    rgb_trunk_level     = 0x0;
+    eluk_led_wmi_set_kbd_zones_effect (ELUK_WMI_LED_EFFECT_SOLID);
+    eluk_led_wmi_set_kbd_zones_level  (ELUK_WMI_LED_BRIGHT_NONE);
+    rgb_logo_effect                  = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_logo_level                   = ELUK_WMI_LED_BRIGHT_NONE;
+    rgb_trunk_effect                 = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_trunk_level                  = ELUK_WMI_LED_BRIGHT_NONE;
     return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_solid_50(const char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect (0x1);
-    eluk_led_wmi_set_kbd_zones_level  (0x1);
-    rgb_logo_effect     = 0x1;
-    rgb_logo_level      = 0x0;
-    rgb_trunk_effect    = 0x1;
-    rgb_trunk_level     = 0x1;
+    eluk_led_wmi_set_kbd_zones_effect (ELUK_WMI_LED_EFFECT_SOLID);
+    eluk_led_wmi_set_kbd_zones_level  (ELUK_WMI_LED_BRIGHT_HALF);
+    rgb_logo_effect                  = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_logo_level                   = ELUK_WMI_LED_BRIGHT_NONE;
+    rgb_trunk_effect                 = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_trunk_level                  = ELUK_WMI_LED_BRIGHT_HALF;
     return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_solid_100(const char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect (0x1);
-    eluk_led_wmi_set_kbd_zones_level  (0x2);
-    rgb_logo_effect     = 0x1;
-    rgb_logo_level      = 0x0;
-    rgb_trunk_effect    = 0x1;
-    rgb_trunk_level     = 0x2;
+    eluk_led_wmi_set_kbd_zones_effect (ELUK_WMI_LED_EFFECT_SOLID);
+    eluk_led_wmi_set_kbd_zones_level  (ELUK_WMI_LED_BRIGHT_FULL);
+    rgb_logo_effect                  = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_logo_level                   = ELUK_WMI_LED_BRIGHT_NONE;
+    rgb_trunk_effect                 = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_trunk_level                  = ELUK_WMI_LED_BRIGHT_FULL;
     return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_brth_50(const char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect (0x3);
-    eluk_led_wmi_set_kbd_zones_level  (0x1);
-    rgb_logo_effect     = 0x1;
-    rgb_logo_level      = 0x0;
-    rgb_trunk_effect    = 0x3;
-    rgb_trunk_level     = 0x1;
+    eluk_led_wmi_set_kbd_zones_effect (ELUK_WMI_LED_EFFECT_BREATHE);
+    eluk_led_wmi_set_kbd_zones_level  (ELUK_WMI_LED_BRIGHT_HALF);
+    rgb_logo_effect                  = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_logo_level                   = ELUK_WMI_LED_BRIGHT_NONE;
+    rgb_trunk_effect                 = ELUK_WMI_LED_EFFECT_BREATHE;
+    rgb_trunk_level                  = ELUK_WMI_LED_BRIGHT_HALF;
     return eluk_led_wmi_colors_commit_all(NULL, NULL);
 }
 
 static int eluk_led_wmi_brth_100(const char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_set_default_colors();
-    eluk_led_wmi_set_kbd_zones_effect (0x3);
-    eluk_led_wmi_set_kbd_zones_level  (0x2);
-    rgb_logo_effect     = 0x1;
-    rgb_logo_level      = 0x0;
-    rgb_trunk_effect    = 0x3;
-    rgb_trunk_level     = 0x2;
+    eluk_led_wmi_set_kbd_zones_effect (ELUK_WMI_LED_EFFECT_BREATHE);
+    eluk_led_wmi_set_kbd_zones_level  (ELUK_WMI_LED_BRIGHT_FULL);
+    rgb_logo_effect                  = ELUK_WMI_LED_EFFECT_SOLID;
+    rgb_logo_level                   = ELUK_WMI_LED_BRIGHT_NONE;
+    rgb_trunk_effect                 = ELUK_WMI_LED_EFFECT_BREATHE;
+    rgb_trunk_level                  = ELUK_WMI_LED_BRIGHT_FULL;
     return eluk_led_wmi_colors_commit_all(NULL, NULL);
+}
+
+static int eluk_led_wmi_ambi_50(const char *buffer, const struct kernel_param *kp)
+{
+    eluk_led_wmi_set_ambi_colors(ELUK_WMI_LED_BRIGHT_HALF);
+    return eluk_led_wmi_colors_commit_kbd(NULL, NULL);
+}
+
+static int eluk_led_wmi_ambi_100(const char *buffer, const struct kernel_param *kp)
+{
+    eluk_led_wmi_set_ambi_colors(ELUK_WMI_LED_BRIGHT_FULL);
+    return eluk_led_wmi_colors_commit_kbd(NULL, NULL);
 }
 
 static int eluk_led_wmi_get_logo_a3(void)
@@ -559,6 +589,20 @@ static const struct kernel_param_ops eluk_kbd_preset_breathing_100_ops = {
 };
 module_param_cb(rgb_preset_breathing_100, &eluk_kbd_preset_breathing_100_ops, NULL, PERM_W_ADMIN);
 MODULE_PARM_DESC(rgb_preset_breathing_100, "Apply Breathing Full Brightness RGB driver preset.");
+
+static const struct kernel_param_ops eluk_kbd_preset_ambient_50_ops = {
+    .set    = eluk_led_wmi_ambi_50,
+    .get    = NULL,
+};
+module_param_cb(rgb_preset_ambient_50, &eluk_kbd_preset_ambient_50_ops, NULL, PERM_W_ADMIN);
+MODULE_PARM_DESC(rgb_preset_ambient_50, "Apply Ambilight Half Brightness RGB driver preset.");
+ 
+static const struct kernel_param_ops eluk_kbd_preset_ambient_100_ops = {
+    .set    = eluk_led_wmi_ambi_100,
+    .get    = NULL,
+};
+module_param_cb(rgb_preset_ambient_100, &eluk_kbd_preset_ambient_100_ops, NULL, PERM_W_ADMIN);
+MODULE_PARM_DESC(rgb_preset_ambient_100, "Apply Ambilight Full Brightness RGB driver preset.");
 // endsection: preset ops
 
 // section: Zone Colors

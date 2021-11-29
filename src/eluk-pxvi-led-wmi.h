@@ -74,6 +74,9 @@
 #define ELUK_WMI_LED_EFFECT_RAINBOW        0x6
 #define ELUK_WMI_LED_EFFECT_AMBIENT        0x7
 
+// Special Magicks
+#define ELUK_WMI_LED_COLOR_AMBIENT         0x101010
+
 //#define ELUK_WMI_LED_BREF_
 
 //#define ELUK_DEBUGGING

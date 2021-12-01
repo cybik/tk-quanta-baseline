@@ -38,6 +38,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this software.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+// TODO: Vendor line - imitate dmi, but have it in the driver
+// TODO: Vendor line - imitate dmi, but have it in the driver
+// TODO: Vendor line - imitate dmi, but have it in the driver
+
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 #include <linux/acpi.h>
 #include <linux/module.h>
@@ -239,8 +244,11 @@ void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
         );
     }
 }
+#endif
+
 void debug_print_colors(union wmi_setting* settings, int count)
 {
+#if defined(ELUK_BUF_LOGGING)
     int counter;
     pr_info("notify:    Debugging - Printing all data\n");
     pr_info("notify:     Debugging - Printing logo   :: 0x%02X 0x%02X 0x%06X\n", rgb_logo_effect,  rgb_logo_level,  rgb_logo_color);
@@ -253,8 +261,8 @@ void debug_print_colors(union wmi_setting* settings, int count)
     {
         eluk_led_evt_cb_buf(32*sizeof(u8), settings[counter].bytes);
     }
-}
 #endif
+}
 
 static const struct wmi_device_id eluk_led_wmi_device_ids[] = {
     // Listing one should be enough, for a driver that "takes care of all anyways"
@@ -424,9 +432,9 @@ static int eluk_led_wmi_get_left_a3(void)
     return BITW_A3(rgb_left_effect, rgb_left_level, rgb_left_color);
 }
 
-#define APPLY_SETTINGS(STNGS, CNT, BUF) \
+#define APPLY_SETTINGS(STNGS, CNT, BUF, DO_COM) \
     int status = 0; \
-    if(!doCommit) \
+    if(!DO_COM) \
     { \
         debug_print_colors(STNGS, CNT); \
         return 0; \
@@ -458,7 +466,7 @@ static int actual_colors_commit_all(char *buffer, const struct kernel_param *kp,
      .a2 = ELUK_WMI_LED_ZONE_LEFT,     .a3 = eluk_led_wmi_get_left_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 },
     };
-    APPLY_SETTINGS(settings, 5, buffer); // returns
+    APPLY_SETTINGS(settings, 5, buffer, doCommit); // returns
 }
 
 static int actual_colors_commit_kbd(char *buffer, const struct kernel_param *kp, bool doCommit)
@@ -475,7 +483,7 @@ static int actual_colors_commit_kbd(char *buffer, const struct kernel_param *kp,
      .a2 = ELUK_WMI_LED_ZONE_LEFT,     .a3 = eluk_led_wmi_get_left_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 },
     };
-    APPLY_SETTINGS(settings, 3, buffer); // returns
+    APPLY_SETTINGS(settings, 3, buffer, doCommit); // returns
 }
 
 static int actual_colors_commit_trunk(char *buffer, const struct kernel_param *kp, bool doCommit)
@@ -486,7 +494,7 @@ static int actual_colors_commit_trunk(char *buffer, const struct kernel_param *k
      .a2 = ELUK_WMI_LED_ZONE_TRUNK,    .a3 = eluk_led_wmi_get_trunk_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 }
     };
-    APPLY_SETTINGS(settings, 1, buffer); // returns
+    APPLY_SETTINGS(settings, 1, buffer, doCommit); // returns
 }
 
 static int actual_colors_commit_logo(char *buffer, const struct kernel_param *kp, bool doCommit)
@@ -497,7 +505,7 @@ static int actual_colors_commit_logo(char *buffer, const struct kernel_param *kp
      .a2 = ELUK_WMI_LED_ZONE_LOGO,     .a3 = eluk_led_wmi_get_logo_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 }
     };
-    APPLY_SETTINGS(settings, 1, buffer); // returns
+    APPLY_SETTINGS(settings, 1, buffer, doCommit); // returns
 }
 
 

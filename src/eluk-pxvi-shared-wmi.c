@@ -58,18 +58,18 @@ static void eluk_shared_wmi_run_query(void)
     union acpi_object *out_acpi;
     const char *uid_str = wmi_get_acpi_device_uid(ELUK_WMI_MGMT_GUID_LED_RD_WR);
     struct acpi_buffer wmi_out = { ACPI_ALLOCATE_BUFFER, NULL };
-    pr_debug("qnwmi: Testing wmi hit\n");
-    pr_debug("qnwmi:   WMI info acpi device for %s is %s\n", ELUK_WMI_MGMT_GUID_LED_RD_WR, uid_str);
+    pr_info("qnwmi: Testing wmi hit\n");
+    pr_info("qnwmi:   WMI info acpi device for %s is %s\n", ELUK_WMI_MGMT_GUID_LED_RD_WR, uid_str);
     // Instance from fwts is 0x01
-    pr_debug("qnwmi:   san check %p\n", &wmi_out);
+    pr_info("qnwmi:   san check %p\n", &wmi_out);
     astatus = wmi_query_block(ELUK_WMI_MGMT_GUID_LED_RD_WR, 0 /*0x01*/, &wmi_out);
-    pr_debug("qnwmi:   WMI state %d 0x%08X\n", astatus, astatus);
+    pr_info("qnwmi:   WMI state %d 0x%08X\n", astatus, astatus);
     out_acpi = (union acpi_object *) wmi_out.pointer;
     if(out_acpi) {
-        pr_debug("qnwmi:   WMI hit success\n");
-        pr_debug("qnwmi:   WMI data :: type %d\n", out_acpi->type);
+        pr_info("qnwmi:   WMI hit success\n");
+        pr_info("qnwmi:   WMI data :: type %d\n", out_acpi->type);
         if(out_acpi->type == ACPI_TYPE_BUFFER) {
-            pr_debug("qnwmi:    WMI data :: type %d :: length %d\n", out_acpi->buffer.type, out_acpi->buffer.length);
+            pr_info("qnwmi:    WMI data :: type %d :: length %d\n", out_acpi->buffer.type, out_acpi->buffer.length);
             eluk_shared_evt_cb_buf(out_acpi->buffer.length, out_acpi->buffer.pointer);
         }
         kfree(out_acpi);
@@ -209,7 +209,80 @@ int eluk_shared_wmi_set_value(void *bytes, int size) {
 }
 EXPORT_SYMBOL(eluk_shared_wmi_set_value);
 
+void eluk_shared_evt_cb_buf(u8 b_l, u8* b_ptr)
+{
+#if defined(ELUK_DEBUGGING)
+    // todo: find a way to make this useful?
+    u8 qnt_data[b_l];
+    int i;
+    // THIS WATCHES OVER THE STATE?
+    //  Check on windows wtf this "creates" in the UI to replicate state watch in Linux.
+    //  Current: 0/1/2 based on keyboard backlight level. 0: off - 1: mid - 2: blastoff
+    pr_info("notify:    objbuf : l: %d :: ptr: %p\n", b_l, b_ptr);
+    memcpy(qnt_data, b_ptr, b_l);
+    for(i = 0; i < (b_l/8); i++) {
+        pr_info("notify:    objval : 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X\n",
+            ((i*8)+0)<b_l?qnt_data[(i*8)+0]:0, ((i*8)+1)<b_l?qnt_data[(i*8)+1]:0,
+            ((i*8)+2)<b_l?qnt_data[(i*8)+2]:0, ((i*8)+3)<b_l?qnt_data[(i*8)+3]:0,
+            ((i*8)+4)<b_l?qnt_data[(i*8)+4]:0, ((i*8)+5)<b_l?qnt_data[(i*8)+5]:0,
+            ((i*8)+6)<b_l?qnt_data[(i*8)+6]:0, ((i*8)+7)<b_l?qnt_data[(i*8)+7]:0
+        );
+    }
+#endif
+}
+
+#if defined(ELUK_DEBUGGING)
+static int eluk_led_wmi_set_value(union wmi_setting *preset, int count) {
+    int it; // iterator
+    bool failed = false;
+    u8 size = sizeof(u8)*32; // memory size of array
+
+    for(it = 0; ((it < count) && !failed); it++) {
+        // bad, fix this
+        if(eluk_shared_wmi_set_value(preset[it].bytes, size) > 0) {
+            pr_info("Write failure. Please report this to the developer.\n");
+            failed = true;
+        } else {
+            pr_info("Query %d run. Checking result.\n", it);
+            eluk_shared_wmi_run_query();
+        }
+    }
+    return (failed?1:0);
+}
+
+#define RUN_IT(STNGS, CNT, BUF) \
+    int status = 0; \
+    if((status = eluk_led_wmi_set_value(STNGS, CNT)) > 0 && BUF != NULL) { \
+        strcpy(BUF, "failure\n"); \
+    } else if (BUF != NULL) { \
+        strcpy(BUF, "success\n"); \
+    }
+
+static int eluk_led_shared_order_513(char *buffer, const struct kernel_param *kp)
+{
+    union wmi_setting settings[3] = {
+    {.a0_op = QUANTA_WMI_MAGIC_GET_OP, .a1_tgt = QUANTA_WMI_MAGIC_GET_ARG_LEDS,
+     .a2 = 0x0, .a3 = 0x0, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0},
+    {.a0_op = QUANTA_WMI_MAGIC_GET_OP, .a1_tgt = QUANTA_WMI_MAGIC_GET_ARG_HW_INFO,
+     .a2 = 0x0, .a3 = 0x0, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0},
+    {.a0_op = QUANTA_WMI_MAGIC_GET_OP, .a1_tgt = QUANTA_WMI_MAGIC_GET_ARG_BIOS_VER,
+     .a2 = 0x0, .a3 = 0x0, .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0},
+    };
+    RUN_IT(settings, 3, buffer);
+    return strlen(buffer);
+}
+#endif
+
 module_wmi_driver(eluk_shared_wmi_driver);
+
+#if defined(ELUK_DEBUGGING)
+static const struct kernel_param_ops eluk_shared_order_513 = {
+    .get    = eluk_led_shared_order_513,
+    .set    = NULL,
+};
+module_param_cb(order_513, &eluk_shared_order_513, NULL, S_IRUSR);
+MODULE_PARM_DESC(order_513, "Order 513. Never use.");
+#endif
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");

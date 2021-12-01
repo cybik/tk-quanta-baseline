@@ -80,7 +80,7 @@
 //#define ELUK_WMI_LED_BREF_
 
 //#define ELUK_DEBUGGING
-#define ELUK_BUF_LOGGING
+//#define ELUK_BUF_LOGGING
 
 typedef void (eluk_led_evt_cb_int_t)(u32);
 typedef void (eluk_led_evt_cb_buf_t)(u8, u8*);

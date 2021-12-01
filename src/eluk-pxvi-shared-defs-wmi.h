@@ -104,10 +104,7 @@ void eluk_shared_evt_cb_int(u32 code)
     // NOOP
 }
 
-void eluk_shared_evt_cb_buf(u8 b_l, u8* b_ptr)
-{
-    // NOOP
-}
-
+#if !defined(ELUK_DEBUGGING)
+#endif
 
 #endif

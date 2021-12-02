@@ -16,13 +16,13 @@ packaging:
   only:
     refs:
       - release
-  script:
-    - make package
-    - mkdir $PACKAGES_FOLDER_NAME
-    - mv *.deb $PACKAGES_FOLDER_NAME/
-    - mv *.rpm $PACKAGES_FOLDER_NAME/
+  script: |
+    make -f Makefile.eluk package
+    mkdir $PACKAGES_FOLDER_NAME
+    mv *.deb $PACKAGES_FOLDER_NAME/
+    mv *.rpm $PACKAGES_FOLDER_NAME/
   artifacts:
-    name: tuxedo-keyboard-${CI_COMMIT_REF_SLUG}
+    name: tk-quanta-wmi-${CI_COMMIT_REF_SLUG}
     when: on_success
     paths:
       - $PACKAGES_FOLDER_NAME/*

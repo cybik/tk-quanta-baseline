@@ -13,9 +13,6 @@ stages:
 
 packaging:
   stage: build_packages
-  only:
-    refs:
-      - release
   script: |
     make -f Makefile.eluk package
     mkdir $PACKAGES_FOLDER_NAME

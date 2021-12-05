@@ -43,7 +43,7 @@ meant for use with the DKMS framework.
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/src/%{module}-%{version}/
 cp dkms.eluk.conf %{buildroot}/usr/src/%{module}-%{version}
-cp Makefile.eluk  %{buildroot}/usr/src/%{module}-%{version}/Makefile
+cp Makefile %{buildroot}/usr/src/%{module}-%{version}/Makefile
 cp -R src/* %{buildroot}/usr/src/%{module}-%{version}
 mkdir -p %{buildroot}/etc/udev/rules.d/
 cp 90_eluk_wmi.rules %{buildroot}/etc/udev/rules.d/

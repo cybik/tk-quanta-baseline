@@ -80,6 +80,11 @@
 //#define ELUK_WMI_LED_BREF_
 #define ELUK_ENABLE_PRESETS
 
+//Errors
+#define E_COLOR  0x1230
+#define E_LEVEL  0x1231
+#define E_EFFECT 0x1232
+
 typedef void (eluk_led_evt_cb_int_t)(u32);
 typedef void (eluk_led_evt_cb_buf_t)(u8, u8*);
 

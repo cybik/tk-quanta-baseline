@@ -545,14 +545,235 @@ static int actual_colors_commit_logo(char *buffer, const struct kernel_param *kp
     return apply_settings(settings, 1, buffer, doCommit); // returns
 }
 
+static int check_kbd_colors(char*);
+static int check_logo_colors(char*);
+static int check_trunk_colors(char*);
+static int check_trunk_colors(char* buffer)
+{
+    switch(eluk_led_wmi_verify(rgb_trunk_effect, rgb_trunk_level, rgb_trunk_color, true))
+    {
+        case(ELUK_ERR_CHECK_EFFECT):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Left side has an illegal effect.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_EFFECT;
+            }
+        }
+        case(ELUK_ERR_CHECK_LEVEL):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Left side has an illegal level.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_LEVEL;
+            }
+        }
+        case(ELUK_ERR_CHECK_COLOR):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Left side has an illegal color.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_COLOR; // create E_COLOR
+            }
+        }
+        default: {}
+    }
+    return 0;
+}
+
+static int check_logo_colors(char* buffer)
+{
+    switch(eluk_led_wmi_verify(rgb_logo_effect, rgb_logo_level, rgb_logo_color, true))
+    {
+        case(ELUK_ERR_CHECK_EFFECT):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Logo has an illegal effect.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_EFFECT;
+            }
+        }
+        case(ELUK_ERR_CHECK_LEVEL):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Logo has an illegal level.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_LEVEL;
+            }
+        }
+        case(ELUK_ERR_CHECK_COLOR):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Logo has an illegal color.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_COLOR; // create E_COLOR
+            }
+        }
+        default: {}
+    }
+    return 0;
+}
+
+static int check_kbd_colors(char* buffer)
+{
+    switch(eluk_led_wmi_verify(rgb_left_effect, rgb_left_level, rgb_left_color, true))
+    {
+        case(ELUK_ERR_CHECK_EFFECT):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Left side has an illegal effect.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_EFFECT;
+            }
+        }
+        case(ELUK_ERR_CHECK_LEVEL):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Left side has an illegal level.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_LEVEL;
+            }
+        }
+        case(ELUK_ERR_CHECK_COLOR):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Left side has an illegal color.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_COLOR; // create E_COLOR
+            }
+        }
+        default: {}
+    }
+    switch(eluk_led_wmi_verify(rgb_cntr_effect, rgb_cntr_level, rgb_cntr_color, true))
+    {
+        case(ELUK_ERR_CHECK_EFFECT):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Centre has an illegal effect.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_EFFECT;
+            }
+        }
+        case(ELUK_ERR_CHECK_LEVEL):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Centre has an illegal level.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_LEVEL;
+            }
+        }
+        case(ELUK_ERR_CHECK_COLOR):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Centre has an illegal color.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_COLOR; // create E_COLOR
+            }
+        }
+        default: {}
+    }
+    switch(eluk_led_wmi_verify(rgb_right_effect, rgb_right_level, rgb_right_color, true))
+    {
+        case(ELUK_ERR_CHECK_EFFECT):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Right side has an illegal effect.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_EFFECT;
+            }
+        }
+        case(ELUK_ERR_CHECK_LEVEL):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Right side has an illegal level.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_LEVEL;
+            }
+        }
+        case(ELUK_ERR_CHECK_COLOR):
+        {
+            if(buffer != NULL) 
+            {
+                strcpy(buffer, "Right side has an illegal color.\n");
+                return strlen(buffer);
+            }
+            else
+            {
+                return E_COLOR; // create E_COLOR
+            }
+        }
+        default: {}
+    }
+    return 0;
+}
+
 #if defined(ELUK_ENABLE_PRESETS)
 static int eluk_led_wmi_colors_commit_all(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_left_effect, rgb_left_level, rgb_left_color, true);
-    eluk_led_wmi_verify(rgb_cntr_effect, rgb_cntr_level, rgb_cntr_color, true);
-    eluk_led_wmi_verify(rgb_right_effect, rgb_right_level, rgb_right_color, true);
-    eluk_led_wmi_verify(rgb_logo_effect, rgb_logo_level, rgb_logo_color, false);
-    eluk_led_wmi_verify(rgb_trunk_effect, rgb_trunk_level, rgb_trunk_color, false);
+    int status;
+    if(((status = check_kbd_colors(buffer)) != 0) 
+        || ((status = check_logo_colors(buffer)) != 0)
+        || ((status = check_trunk_colors(buffer)) != 0)
+    )
+    {
+        return status;
+    }
     return actual_colors_commit_all(buffer, kp, true);
 }
 /*
@@ -568,23 +789,34 @@ static int eluk_led_wmi_colors_pretend_commit_all(char *buffer, const struct ker
 */
 #endif
 
+
 static int eluk_led_wmi_colors_commit_kbd(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_left_effect, rgb_left_level, rgb_left_color, true);
-    eluk_led_wmi_verify(rgb_cntr_effect, rgb_cntr_level, rgb_cntr_color, true);
-    eluk_led_wmi_verify(rgb_right_effect, rgb_right_level, rgb_right_color, true);
+    int status;
+    if((status = check_kbd_colors(buffer)) != 0)
+    {
+        return status;
+    }
     return actual_colors_commit_kbd(buffer, kp, true);
 }
 
 static int eluk_led_wmi_colors_commit_trunk(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_trunk_effect, rgb_trunk_level, rgb_trunk_color, false);
+    int status;
+    if((status = check_trunk_colors(buffer)) != 0)
+    {
+        return status;
+    }
     return actual_colors_commit_trunk(buffer, kp, true);
 }
 
 static int eluk_led_wmi_colors_commit_logo(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_logo_effect, rgb_logo_level, rgb_logo_color, false);
+    int status;
+    if((status = check_logo_colors(buffer)) != 0)
+    {
+        return status;
+    }
     return actual_colors_commit_logo(buffer, kp, true);
 }
 

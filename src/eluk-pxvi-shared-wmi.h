@@ -75,5 +75,4 @@ eluk_shared_evt_cb_int_t eluk_shared_evt_cb_int;
 eluk_shared_evt_cb_buf_t eluk_shared_evt_cb_buf;
 
 
-
 #endif

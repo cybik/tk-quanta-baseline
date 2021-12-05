@@ -78,9 +78,7 @@
 #define ELUK_WMI_LED_COLOR_AMBIENT         0x101010
 
 //#define ELUK_WMI_LED_BREF_
-
-//#define ELUK_DEBUGGING
-//#define ELUK_BUF_LOGGING
+#define ELUK_ENABLE_PRESETS
 
 typedef void (eluk_led_evt_cb_int_t)(u32);
 typedef void (eluk_led_evt_cb_buf_t)(u8, u8*);

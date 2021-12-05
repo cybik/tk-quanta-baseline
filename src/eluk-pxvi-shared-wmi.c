@@ -286,7 +286,7 @@ MODULE_PARM_DESC(order_513, "Order 513. Never use.");
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");
-MODULE_VERSION("0.0.6");
+MODULE_VERSION("0.1.0");
 MODULE_LICENSE("GPL");
 MODULE_SOFTDEP("post: eluk-pxvi-led-wmi");
 

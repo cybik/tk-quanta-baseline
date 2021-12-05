@@ -42,6 +42,10 @@
 
 #include "eluk-pxvi-shared-wmi.h"
 
+//#define ELUK_DEBUGGING
+//#define ELUK_BUF_LOGGING
+//#define ELUK_ENABLE_PRESETS
+
 static struct eluk_shared_interfaces_t {
     struct eluk_shared_interface_t *wmi;
 } eluk_shared_interfaces = { .wmi = NULL };

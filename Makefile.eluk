@@ -127,7 +127,8 @@ package-rpm:
 	cp -rf dkms.eluk.conf $(RPM_PACKAGE_SRC)
 	bash -c 'cd $(RPM_PACKAGE_SRC); ln -s dkms.eluk.conf dkms.conf'
 	cp -rf Makefile.eluk $(RPM_PACKAGE_SRC)/Makefile
-	cp -rf src/eluk* src/quanta* $(RPM_PACKAGE_SRC)
+	mkdir -p $(RPM_PACKAGE_SRC)/src
+	cp -rf src/eluk* src/quanta* $(RPM_PACKAGE_SRC)/src
 	cp -rf LICENSE $(RPM_PACKAGE_SRC)
 	cp -rf src_pkg/dkms_postinst $(RPM_PACKAGE_SRC)/postinst
 	# Compress/package source

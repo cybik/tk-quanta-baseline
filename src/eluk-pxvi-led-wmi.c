@@ -52,7 +52,8 @@
 #include "eluk-pxvi-led-wmi.h"
 #include "eluk-pxvi-shared-wmi.h"
 
-#define ELUK_EXPERIMENTAL
+//#define ELUK_EXPERIMENTAL
+#define ELUK_TESTING
 
 // Bitwise macro to create the color.
 #define BITW_A3(X, Y, Z) ((((X << 4) | Y) << 24) | Z)
@@ -98,6 +99,10 @@ static int eluk_led_wmi_colors_commit_all  (char *, const struct kernel_param *)
 static int eluk_led_wmi_colors_commit_kbd  (char *, const struct kernel_param *);
 static int eluk_led_wmi_colors_commit_logo (char *, const struct kernel_param *);
 static int eluk_led_wmi_colors_commit_trunk(char *, const struct kernel_param *);
+
+static int check_kbd_colors(char*);
+static int check_logo_colors(char*);
+static int check_trunk_colors(char*);
 
 //DEFINE_MUTEX(eluk_wmi_lock); // unused?
 
@@ -246,11 +251,9 @@ void eluk_led_evt_cb_buf(u8 b_l, u8* b_ptr)
         );
     }
 }
-#endif
 
 void debug_print_colors(union wmi_setting* settings, int count)
 {
-#if defined(ELUK_BUF_LOGGING)
     int counter;
     pr_info("notify:    Debugging - Printing all data\n");
     pr_info("notify:     Debugging - Printing logo   :: 0x%02X 0x%02X 0x%06X\n", rgb_logo_effect,  rgb_logo_level,  rgb_logo_color);
@@ -263,8 +266,8 @@ void debug_print_colors(union wmi_setting* settings, int count)
     {
         eluk_led_evt_cb_buf(32*sizeof(u8), settings[counter].bytes);
     }
-#endif
 }
+#endif
 
 static const struct wmi_device_id eluk_led_wmi_device_ids[] = {
     // Listing one should be enough, for a driver that "takes care of all anyways"
@@ -421,7 +424,9 @@ static int apply_settings(union wmi_setting *STNGS, u8 CNT, char* BUF, bool DO_C
     int status = 0;
     if(!DO_COM)
     {
+#if defined(ELUK_BUF_LOGGING)
         debug_print_colors(STNGS, CNT);
+#endif
         return 0;
     }
     if((status = eluk_led_wmi_set_value(STNGS, CNT)) > 0 && BUF != NULL) {
@@ -545,9 +550,6 @@ static int actual_colors_commit_logo(char *buffer, const struct kernel_param *kp
     return apply_settings(settings, 1, buffer, doCommit); // returns
 }
 
-static int check_kbd_colors(char*);
-static int check_logo_colors(char*);
-static int check_trunk_colors(char*);
 static int check_trunk_colors(char* buffer)
 {
     switch(eluk_led_wmi_verify(rgb_trunk_effect, rgb_trunk_level, rgb_trunk_color, true))
@@ -556,7 +558,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an illegal effect.\n");
+                strcpy(buffer, "Left side has an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -568,7 +570,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an illegal level.\n");
+                strcpy(buffer, "Left side has an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -580,7 +582,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an illegal color.\n");
+                strcpy(buffer, "Left side has an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -601,7 +603,7 @@ static int check_logo_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Logo has an illegal effect.\n");
+                strcpy(buffer, "Logo has an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -613,7 +615,7 @@ static int check_logo_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Logo has an illegal level.\n");
+                strcpy(buffer, "Logo has an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -625,7 +627,7 @@ static int check_logo_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Logo has an illegal color.\n");
+                strcpy(buffer, "Logo has an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -646,7 +648,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an illegal effect.\n");
+                strcpy(buffer, "Left side has an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -658,7 +660,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an illegal level.\n");
+                strcpy(buffer, "Left side has an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -670,7 +672,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an illegal color.\n");
+                strcpy(buffer, "Left side has an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -686,7 +688,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Centre has an illegal effect.\n");
+                strcpy(buffer, "Centre has an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -698,7 +700,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Centre has an illegal level.\n");
+                strcpy(buffer, "Centre has an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -710,7 +712,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Centre has an illegal color.\n");
+                strcpy(buffer, "Centre has an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -726,7 +728,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Right side has an illegal effect.\n");
+                strcpy(buffer, "Right side has an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -738,7 +740,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Right side has an illegal level.\n");
+                strcpy(buffer, "Right side has an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -750,7 +752,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Right side has an illegal color.\n");
+                strcpy(buffer, "Right side has an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -821,6 +823,7 @@ static int eluk_led_wmi_colors_commit_logo(char *buffer, const struct kernel_par
 }
 
 // pretend up
+#if defined(ELUK_TESTING)
 static int eluk_led_wmi_colors_pretend_commit_kbd(char *buffer, const struct kernel_param *kp)
 {
     eluk_led_wmi_verify(rgb_left_effect, rgb_left_level, rgb_left_color, true);
@@ -840,6 +843,7 @@ static int eluk_led_wmi_colors_pretend_commit_logo(char *buffer, const struct ke
     eluk_led_wmi_verify(rgb_logo_effect, rgb_logo_level, rgb_logo_color, false);
     return actual_colors_commit_logo(buffer, kp, false);
 }
+#endif
 
 module_wmi_driver(eluk_led_wmi_driver);
 
@@ -1003,6 +1007,7 @@ module_param_cb(rgb_pretend_commit_all, &eluk_pretend_commit_all_ops, NULL, PERM
 MODULE_PARM_DESC(rgb_pretend_commit_all, "Commit all colors and mode setup to WMI.");
 */
 
+#if defined(ELUK_TESTING)
 static const struct kernel_param_ops eluk_pretend_commit_kbd_ops = {
     .get    = eluk_led_wmi_colors_pretend_commit_kbd,
     .set    = NULL,
@@ -1024,6 +1029,7 @@ static const struct kernel_param_ops eluk_pretend_commit_logo_ops = {
 };
 module_param_cb(rgb_pretend_commit_logo, &eluk_pretend_commit_logo_ops, NULL, PERM_RO_ALL);
 MODULE_PARM_DESC(rgb_pretend_commit_logo, "Commit logo colors and mode setup to WMI.");
+#endif
 // endsection: commit ops
 
 MODULE_DEVICE_TABLE(wmi, eluk_led_wmi_device_ids);

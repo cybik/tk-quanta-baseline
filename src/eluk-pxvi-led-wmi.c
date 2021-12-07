@@ -469,9 +469,11 @@ typedef enum {
     ELUK_ERR_CHECK_OK,
 } eluk_error_check;
 
-static eluk_error_check eluk_led_wmi_verify(u8 effect, u8 level, u8 color, bool has_ambient) {
+// u32: unsigned int; u16: unsigned short; u8: char
+static eluk_error_check eluk_led_wmi_verify(u8 effect, u8 level, u32 color, bool has_ambient) {
     switch (effect)
     {
+        // Allowed values (effects)
         case(ELUK_WMI_LED_EFFECT_SOLID):
         case(ELUK_WMI_LED_EFFECT_BREATHE):
         case(ELUK_WMI_LED_EFFECT_RAINBOW):
@@ -492,6 +494,7 @@ static eluk_error_check eluk_led_wmi_verify(u8 effect, u8 level, u8 color, bool 
     }
     switch (level)
     {
+        // allowed values (brightness levels)
         case(ELUK_WMI_LED_BRIGHT_NONE):
         case(ELUK_WMI_LED_BRIGHT_HALF):
         case(ELUK_WMI_LED_BRIGHT_FULL):
@@ -504,6 +507,7 @@ static eluk_error_check eluk_led_wmi_verify(u8 effect, u8 level, u8 color, bool 
             return ELUK_ERR_CHECK_LEVEL;
         }
     }
+    // allowed colors (0 to 0xFFFFFF only)
     if(color > 0xFFFFFF)
     {
         return ELUK_ERR_CHECK_COLOR;
@@ -558,7 +562,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an unsupported effect.\n");
+                strcpy(buffer, "Left side was set to an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -570,7 +574,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an unsupported level.\n");
+                strcpy(buffer, "Left side was set to an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -582,7 +586,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an unsupported color.\n");
+                strcpy(buffer, "Left side was set to an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -603,7 +607,7 @@ static int check_logo_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Logo has an unsupported effect.\n");
+                strcpy(buffer, "Logo was set to an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -615,7 +619,7 @@ static int check_logo_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Logo has an unsupported level.\n");
+                strcpy(buffer, "Logo was set to an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -627,7 +631,7 @@ static int check_logo_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Logo has an unsupported color.\n");
+                strcpy(buffer, "Logo was set to an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -648,7 +652,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an unsupported effect.\n");
+                strcpy(buffer, "Left side was set to an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -660,7 +664,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an unsupported level.\n");
+                strcpy(buffer, "Left side was set to an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -672,7 +676,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side has an unsupported color.\n");
+                strcpy(buffer, "Left side was set to an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -688,7 +692,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Centre has an unsupported effect.\n");
+                strcpy(buffer, "Centre was set to an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -700,7 +704,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Centre has an unsupported level.\n");
+                strcpy(buffer, "Centre was set to an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -712,7 +716,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Centre has an unsupported color.\n");
+                strcpy(buffer, "Centre was set to an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -728,7 +732,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Right side has an unsupported effect.\n");
+                strcpy(buffer, "Right side was set to an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -740,7 +744,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Right side has an unsupported level.\n");
+                strcpy(buffer, "Right side was set to an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -752,7 +756,7 @@ static int check_kbd_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Right side has an unsupported color.\n");
+                strcpy(buffer, "Right side was set to an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -826,21 +830,28 @@ static int eluk_led_wmi_colors_commit_logo(char *buffer, const struct kernel_par
 #if defined(ELUK_TESTING)
 static int eluk_led_wmi_colors_pretend_commit_kbd(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_left_effect, rgb_left_level, rgb_left_color, true);
-    eluk_led_wmi_verify(rgb_cntr_effect, rgb_cntr_level, rgb_cntr_color, true);
-    eluk_led_wmi_verify(rgb_right_effect, rgb_right_level, rgb_right_color, true);
+    int status;
+    if((status = check_kbd_colors(buffer)) > 0) {
+        return status;
+    }
     return actual_colors_commit_kbd(buffer, kp, false);
 }
 
 static int eluk_led_wmi_colors_pretend_commit_trunk(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_trunk_effect, rgb_trunk_level, rgb_trunk_color, false);
+    int status;
+    if((status = check_trunk_colors(buffer)) > 0) {
+        return status;
+    }
     return actual_colors_commit_trunk(buffer, kp, false);
 }
 
 static int eluk_led_wmi_colors_pretend_commit_logo(char *buffer, const struct kernel_param *kp)
 {
-    eluk_led_wmi_verify(rgb_logo_effect, rgb_logo_level, rgb_logo_color, false);
+    int status;
+    if((status = check_logo_colors(buffer)) > 0) {
+        return status;
+    }
     return actual_colors_commit_logo(buffer, kp, false);
 }
 #endif

@@ -25,9 +25,9 @@ Release:        x
 License:        GPLv3+
 Group:          Hardware/Other
 BuildArch:      noarch
-Url:            https://github.com/cybik/tk-quanta-baseline
+Url:            https://github.com/cybik/tk-quanta-elukxvi
 Source:         %{module}-%{version}.tar.bz2
-Provides:       eluk-wmi = %{version}-%{release}
+Provides:       eluk-pxvi-wmi = %{version}-%{release}
 Requires:       dkms >= 1.95
 BuildRoot:      %{_tmppath}
 Packager:       Renaud Lepage <root@cybikbase.com>

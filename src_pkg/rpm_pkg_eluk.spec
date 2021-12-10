@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0644,root,root) /usr/src/%{module}-%{version}/src/*
 %attr(0755,root,root) /usr/share/%{module}/
 %attr(0755,root,root) /usr/share/%{module}/postinst
+%attr(0755,root,root) /etc/udev/rules.d/
+%attr(0644,root,root) /etc/udev/rules.d/*
 %license LICENSE
 
 %post

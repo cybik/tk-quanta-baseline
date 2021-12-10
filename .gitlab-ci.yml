@@ -17,7 +17,6 @@ packaging-debian:
     make -f Makefile.eluk package-deb
     mkdir $PACKAGES_FOLDER_NAME
     mv *.deb $PACKAGES_FOLDER_NAME/
-    mv *.rpm $PACKAGES_FOLDER_NAME/
   artifacts:
     name: tk-quanta-wmi-${CI_COMMIT_REF_SLUG}
     when: on_success
@@ -29,7 +28,6 @@ packaging-fedora:
   script: |
     make -f Makefile.eluk package-rpm
     mkdir $PACKAGES_FOLDER_NAME
-    mv *.deb $PACKAGES_FOLDER_NAME/
     mv *.rpm $PACKAGES_FOLDER_NAME/
   artifacts:
     name: tk-quanta-wmi-${CI_COMMIT_REF_SLUG}

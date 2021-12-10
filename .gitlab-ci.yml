@@ -11,10 +11,23 @@ before_script:
 stages:
   - build_packages
 
-packaging:
+packaging-debian:
   stage: build_packages
   script: |
-    make -f Makefile.eluk package
+    make -f Makefile.eluk package-deb
+    mkdir $PACKAGES_FOLDER_NAME
+    mv *.deb $PACKAGES_FOLDER_NAME/
+    mv *.rpm $PACKAGES_FOLDER_NAME/
+  artifacts:
+    name: tk-quanta-wmi-${CI_COMMIT_REF_SLUG}
+    when: on_success
+    paths:
+      - $PACKAGES_FOLDER_NAME/*
+
+packaging-fedora:
+  stage: build_packages
+  script: |
+    make -f Makefile.eluk package-rpm
     mkdir $PACKAGES_FOLDER_NAME
     mv *.deb $PACKAGES_FOLDER_NAME/
     mv *.rpm $PACKAGES_FOLDER_NAME/

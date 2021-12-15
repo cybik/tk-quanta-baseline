@@ -18,7 +18,7 @@ This repository's contents being irrelevant to and fundamentally detached from u
 
 However, cloning this repository will give you the full history of development, so that you can see the full modification history; this preserves access to the original code, as well as original deviations leading to the altered source tree.
 
-This repository's maintainers wish to thank TuxedoKeyboards for the original codebase on top of which this module set was constructed.
+This repository's maintainers wish to thank [TUXEDO Computers](https://www.tuxedocomputers.com/) for the original codebase on top of which this module set was constructed.
 
 ## Hey this looks legit <a name="legit"></a>
 

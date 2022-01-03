@@ -66,7 +66,7 @@ package-deb-nice: package-deb package-deb-cleanup
 package-deb:
 	# Create/complete folder structure according to current version
 	rm -rf $(DEB_PACKAGE_BASE) || true
-	cp -rf deb/module-name/ $(DEB_PACKAGE_BASE)
+	cp -rfL deb/module-name/ $(DEB_PACKAGE_BASE)
 	mv $(DEB_PACKAGE_BASE)/usr/share/doc/module-name $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)
 	mkdir -p $(DEB_PACKAGE_BASE)/usr/src || true
 	mkdir -p $(DEB_PACKAGE_SRC) || true
@@ -82,10 +82,10 @@ package-deb:
 	sed -i 's/^version=[^\n]*/version=$(VER)/g' $(DEB_PACKAGE_CTRL)/prerm
 	sed -i 's/^module=[^\n]*/module=$(MODULE_NAME)/g' $(DEB_PACKAGE_CTRL)/prerm
 	# Copy source
-	cp -rf dkms.conf Makefile $(DEB_PACKAGE_SRC)
-	cp -rf ./$(SUBDIR)/src/eluk* ./$(SUBDIR)/src/quanta* $(DEB_PACKAGE_SRC)/src
-	cp -rf ./src_pkg/90_eluk_wmi.rules $(DEB_PACKAGE_UDEV)
-	cp -rf ./$(SUBDIR)/src_pkg/dkms_postinst $(DEB_PACKAGE_BASE)/usr/share/$(MODULE_NAME)/postinst
+	cp -rfL dkms.conf Makefile $(DEB_PACKAGE_SRC)
+	cp -rfL ./$(SUBDIR)/src/eluk* ./$(SUBDIR)/src/quanta* $(DEB_PACKAGE_SRC)/src
+	cp -rfL ./src_pkg/90_eluk_wmi.rules $(DEB_PACKAGE_UDEV)
+	cp -rfL ./$(SUBDIR)/src_pkg/dkms_postinst $(DEB_PACKAGE_BASE)/usr/share/$(MODULE_NAME)/postinst
 	# Make sure files and folders have acceptable permissions
 	chmod -R 755 $(DEB_PACKAGE_CTRL)
 	chmod 644 $(DEB_PACKAGE_CTRL)/control
@@ -122,7 +122,7 @@ package-rpm:
 	mkdir -p $(RPM_PACKAGE_SRC)
 	mkdir -p rpm/SPECS
 	# Copy spec template
-	cp -rf ./src_pkg/rpm_pkg.spec $(RPM_SPEC)
+	cp -rfL ./src_pkg/rpm_pkg.spec $(RPM_SPEC)
 	# check
 	find .
 	ls -l $(RPM_SPEC) || true
@@ -131,11 +131,11 @@ package-rpm:
 	sed -i 's/^Version:[^\n]*/Version:        $(VER)/g' $(RPM_SPEC)
 	sed -i 's/^Release:[^\n]*/Release:        $(RELEASE)/g' $(RPM_SPEC)
 	# Copy source
-	cp -rf ./src_pkg/90_eluk_wmi.rules ./dkms.conf ./Makefile $(RPM_PACKAGE_SRC)
+	cp -rfL ./src_pkg/90_eluk_wmi.rules ./dkms.conf ./Makefile $(RPM_PACKAGE_SRC)
 	mkdir -p $(RPM_PACKAGE_SRC)/src
-	cp -rf ./$(SUBDIR)/src/eluk* ./$(SUBDIR)/src/quanta* $(RPM_PACKAGE_SRC)/src
-	cp -rf ./$(SUBDIR)/LICENSE $(RPM_PACKAGE_SRC)
-	cp -rf ./$(SUBDIR)/src_pkg/dkms_postinst $(RPM_PACKAGE_SRC)/postinst
+	cp -rfL ./$(SUBDIR)/src/eluk* ./$(SUBDIR)/src/quanta* $(RPM_PACKAGE_SRC)/src
+	cp -rfL ./$(SUBDIR)/LICENSE $(RPM_PACKAGE_SRC)
+	cp -rfL ./$(SUBDIR)/src_pkg/dkms_postinst $(RPM_PACKAGE_SRC)/postinst
 	# Compress/package source
 	cd rpm/SOURCES && tar cjvf $(RPM_PACKAGE_NAME).tar.bz2 $(RPM_PACKAGE_NAME)
 	# Make rpm package

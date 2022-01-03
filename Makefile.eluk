@@ -125,7 +125,7 @@ package-rpm:
 	cp -rf ./src_pkg/rpm_pkg.spec $(RPM_SPEC)
 	# check
 	find .
-	ls $(RPM_SPEC) || true
+	ls -l $(RPM_SPEC) || true
 	# Modify spec file with version etc.
 	sed -i 's/^%define module[^\n]*/%define module $(MODULE_NAME)/g' $(RPM_SPEC)
 	sed -i 's/^Version:[^\n]*/Version:        $(VER)/g' $(RPM_SPEC)

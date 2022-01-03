@@ -97,6 +97,9 @@ package-deb:
 	gunzip $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)/changelog.gz
 	gzip -n9 $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)/changelog
 
+	# final check
+	find .
+
 	# Make deb package
 	dpkg-deb --root-owner-group -b $(DEB_PACKAGE_BASE) $(DEB_PACKAGE_NAME).deb
 

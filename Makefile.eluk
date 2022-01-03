@@ -66,7 +66,7 @@ package-deb-nice: package-deb package-deb-cleanup
 package-deb:
 	# Create/complete folder structure according to current version
 	rm -rf $(DEB_PACKAGE_BASE) || true
-	cp -rf deb/module-name $(DEB_PACKAGE_BASE)
+	cp -rf deb/module-name/ $(DEB_PACKAGE_BASE)
 	mv $(DEB_PACKAGE_BASE)/usr/share/doc/module-name $(DEB_PACKAGE_BASE)/usr/share/doc/$(MODULE_NAME)
 	mkdir -p $(DEB_PACKAGE_BASE)/usr/src || true
 	mkdir -p $(DEB_PACKAGE_SRC) || true

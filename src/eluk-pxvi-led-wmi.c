@@ -562,7 +562,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side was set to an unsupported effect.\n");
+                strcpy(buffer, "Trunk was set to an unsupported effect.\n");
                 return strlen(buffer);
             }
             else
@@ -574,7 +574,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side was set to an unsupported level.\n");
+                strcpy(buffer, "Trunk was set to an unsupported level.\n");
                 return strlen(buffer);
             }
             else
@@ -586,7 +586,7 @@ static int check_trunk_colors(char* buffer)
         {
             if(buffer != NULL) 
             {
-                strcpy(buffer, "Left side was set to an unsupported color.\n");
+                strcpy(buffer, "Trunk was set to an unsupported color.\n");
                 return strlen(buffer);
             }
             else
@@ -860,7 +860,7 @@ module_wmi_driver(eluk_led_wmi_driver);
 
 MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
 MODULE_DESCRIPTION("LED functions for the Eluktronics Prometheus XVI WMI interface");
-MODULE_VERSION("0.1.0");
+MODULE_VERSION("1.0.10");
 MODULE_LICENSE("GPL");
 MODULE_SOFTDEP("pre: eluk-pxvi-shared-wmi");
 
@@ -923,56 +923,56 @@ MODULE_PARM_DESC(rgb_preset_ambient_100, "Apply Ambilight Full Brightness RGB dr
 // endsection: preset ops
 
 // section: Zone Colors
-module_param_named(rgb_set_logo_color, rgb_logo_color, uint, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_logo_color, "Color for the Logo.");
+module_param_named(rgb_logo_color, rgb_logo_color, uint, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_logo_color, "Color for the Logo.");
 
-module_param_named(rgb_set_trunk_color, rgb_trunk_color, uint, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_trunk_color, "Color for the Trunk.");
+module_param_named(rgb_trunk_color, rgb_trunk_color, uint, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_trunk_color, "Color for the Trunk.");
 
-module_param_named(rgb_set_left_color, rgb_left_color, uint, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_left_color, "Color for the Left.");
+module_param_named(rgb_left_color, rgb_left_color, uint, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_left_color, "Color for the Left.");
 
-module_param_named(rgb_set_cntr_color, rgb_cntr_color, uint, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_cntr_color, "Color for the Center.");
+module_param_named(rgb_cntr_color, rgb_cntr_color, uint, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_cntr_color, "Color for the Center.");
 
-module_param_named(rgb_set_right_color, rgb_right_color, uint, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_right_color, "Color for the Right.");
+module_param_named(rgb_right_color, rgb_right_color, uint, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_right_color, "Color for the Right.");
 // endsection: Zone Colors
 
 
 // section: Effect/Brightness Setting
 // TODO: can these be made smaller my lord.
-module_param_named(rgb_set_logo_effect, rgb_logo_effect, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_logo_effect, "Effect for the Logo.");
+module_param_named(rgb_logo_effect, rgb_logo_effect, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_logo_effect, "Effect for the Logo.");
 
-module_param_named(rgb_set_trunk_effect, rgb_trunk_effect, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_trunk_effect, "Effect for the Trunk.");
+module_param_named(rgb_trunk_effect, rgb_trunk_effect, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_trunk_effect, "Effect for the Trunk.");
 
-module_param_named(rgb_set_left_effect, rgb_left_effect, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_left_effect, "Effect for the Left.");
+module_param_named(rgb_left_effect, rgb_left_effect, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_left_effect, "Effect for the Left.");
 
-module_param_named(rgb_set_cntr_effect, rgb_cntr_effect, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_cntr_effect, "Effect for the Center.");
+module_param_named(rgb_cntr_effect, rgb_cntr_effect, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_cntr_effect, "Effect for the Center.");
 
-module_param_named(rgb_set_right_effect, rgb_right_effect, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_right_effect, "Effect for the Right.");
+module_param_named(rgb_right_effect, rgb_right_effect, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_right_effect, "Effect for the Right.");
 
 // --
 
-module_param_named(rgb_set_logo_level, rgb_logo_level, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_logo_level, "Brightness for the Logo.");
+module_param_named(rgb_logo_level, rgb_logo_level, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_logo_level, "Brightness for the Logo.");
 
-module_param_named(rgb_set_trunk_level, rgb_trunk_level, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_trunk_level, "Brightness for the Trunk.");
+module_param_named(rgb_trunk_level, rgb_trunk_level, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_trunk_level, "Brightness for the Trunk.");
 
-module_param_named(rgb_set_left_level, rgb_left_level, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_left_level, "Brightness for the Left.");
+module_param_named(rgb_left_level, rgb_left_level, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_left_level, "Brightness for the Left.");
 
-module_param_named(rgb_set_cntr_level, rgb_cntr_level, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_cntr_level, "Brightness for the Center.");
+module_param_named(rgb_cntr_level, rgb_cntr_level, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_cntr_level, "Brightness for the Center.");
 
-module_param_named(rgb_set_right_level, rgb_right_level, int, PERM_RW_ADMIN);
-MODULE_PARM_DESC(rgb_set_right_level, "Brightness for the Right.");
+module_param_named(rgb_right_level, rgb_right_level, int, PERM_RW_ADMIN);
+MODULE_PARM_DESC(rgb_right_level, "Brightness for the Right.");
 // endsection: Effect/Brightness Setting
 
 

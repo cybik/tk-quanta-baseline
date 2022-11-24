@@ -38,12 +38,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this software.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-// TODO: Vendor line - imitate dmi, but have it in the driver
-// TODO: Vendor line - imitate dmi, but have it in the driver
 // TODO: Vendor line - imitate dmi, but have it in the driver
 
-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 #include <linux/acpi.h>
 #include <linux/module.h>
 #include <linux/wmi.h>
@@ -69,28 +65,34 @@
  **********************************************************/
 
 // Default Colors
-static uint rgb_logo_color   = 0x00FFFF; // Default: Teal
-static uint rgb_trunk_color  = 0x00FFFF; // Default: Teal
-static uint rgb_left_color   = 0xFF0000; // Default: Red
-static uint rgb_cntr_color   = 0x00FF00; // Default: Green
-static uint rgb_right_color  = 0x0000FF; // Default: Blue
+static uint rgb_logo_color    = 0x00FFFF; // Default: Teal
+static uint rgb_trunk_color   = 0x00FFFF; // Default: Teal
+static uint rgb_left_color    = 0xFF0000; // Default: Red
+static uint rgb_cntr_color    = 0x00FF00; // Default: Green
+static uint rgb_right_color   = 0x0000FF; // Default: Blue
 
 // Default Effect    ( << 28 )
-static uint rgb_logo_effect  = 0x1;      // Default: Online? to check
-static uint rgb_trunk_effect = 0x1;      // Default: Online? to check
-static uint rgb_left_effect  = 0x1;      // Default: 100%
-static uint rgb_cntr_effect  = 0x1;      // Default: 100%
-static uint rgb_right_effect = 0x1;      // Default: 100%
+//  Possible values: ELUK_WMI_LED_EFFECT_SOLID, ELUK_WMI_LED_EFFECT_BREATHE, ELUK_WMI_LED_EFFECT_RAINBOW, ELUK_WMI_LED_EFFECT_AMBIENT
+static uint rgb_logo_effect   = 0x1;      // Default: Online? to check
+static uint rgb_trunk_effect  = 0x1;      // Default: Online? to check
+static uint rgb_left_effect   = 0x1;      // Default: 100%
+static uint rgb_cntr_effect   = 0x1;      // Default: 100%
+static uint rgb_right_effect  = 0x1;      // Default: 100%
 
 // Default Intensity ( << 24 )
-static uint rgb_logo_level   = 0x0;       // Default: Online? to check
-static uint rgb_trunk_level  = 0x1;       // Default: 50%
-static uint rgb_left_level   = 0x1;       // Default: 50%
-static uint rgb_cntr_level   = 0x1;       // Default: 50%
-static uint rgb_right_level  = 0x1;       // Default: 50%
+// NOTE: intensity is off, 50 or 100. Nothing else.
+//  Possible values: ELUK_WMI_LED_BRIGHT_NONE, ELUK_WMI_LED_BRIGHT_HALF, ELUK_WMI_LED_BRIGHT_FULL
+static uint rgb_logo_level    = 0x0;       // Default: Online? to check
+static uint rgb_trunk_level   = 0x1;       // Default: 50%
+static uint rgb_left_level    = 0x1;       // Default: 50%
+static uint rgb_cntr_level    = 0x1;       // Default: 50%
+static uint rgb_right_level   = 0x1;       // Default: 50%
+
+static bool eluk_logo_committed  = false;
+static bool eluk_trunk_committed = false;
+static bool eluk_kbd_committed   = false;
 
 // endsection: Defaults
-
 
 // Commit predefs
 #if defined(ELUK_ENABLE_PRESETS)
@@ -354,6 +356,53 @@ static void eluk_led_set_effect_and_level(uint effect, uint level)
     rgb_logo_effect                  = ELUK_WMI_LED_EFFECT_SOLID;
     rgb_logo_level                   = ELUK_WMI_LED_BRIGHT_NONE;
 }
+
+static int eluk_led_wmi_last_known_state(char *buffer, const struct kernel_param *kp)
+{
+    int size = sprintf(
+        buffer,
+        "{\n"
+            "\t'logo': {\n"
+                "\t\t'valid': %s,\n"
+                "\t\t'c': 0x%06X,\n"
+                "\t\t'e': 0x%X,\n"
+                "\t\t'l': 0x%X\n"
+            "\t},\n"
+            "\t'trunk': {\n"
+                "\t\t'valid': %s,\n"
+                "\t\t'c': 0x%06X,\n"
+                "\t\t'e': 0x%X,\n"
+                "\t\t'l': 0x%X\n"
+            "\t},\n"
+            "\t'kbd': {\n"
+                "\t\t'valid': %s,\n"
+                "\t\t'l': {\n"
+                    "\t\t\t'c': 0x%06X,\n"
+                    "\t\t\t'e': 0x%X,\n"
+                    "\t\t\t'l': 0x%X\n"
+                "\t\t},\n"
+                "\t\t'c': {\n"
+                    "\t\t\t'c': 0x%06X,\n"
+                    "\t\t\t'e': 0x%X,\n"
+                    "\t\t\t'l': 0x%X\n"
+                "\t\t},\n"
+                "\t\t'r': {\n"
+                    "\t\t\t'c': 0x%06X,\n"
+                    "\t\t\t'e': 0x%X,\n"
+                    "\t\t\t'l': 0x%X\n"
+                "\t\t}\n"
+            "\t}\n"
+        "}\n",
+        (eluk_logo_committed? "true":"false"), rgb_logo_color,  rgb_logo_effect,  rgb_logo_level,
+        (eluk_trunk_committed?"true":"false"), rgb_trunk_color, rgb_trunk_effect, rgb_trunk_level,
+        (eluk_kbd_committed?  "true":"false"),
+            rgb_left_color,  rgb_left_effect,  rgb_left_level,
+            rgb_cntr_color,  rgb_cntr_effect,  rgb_cntr_level,
+            rgb_right_color, rgb_right_effect, rgb_right_level
+    );
+    return size;
+}
+
 static int eluk_led_wmi_offline(char *buffer, const struct kernel_param *kp)
 {
     // Set offline, but hard for now.
@@ -431,8 +480,10 @@ static int apply_settings(union wmi_setting *STNGS, u8 CNT, char* BUF, bool DO_C
     }
     if((status = eluk_led_wmi_set_value(STNGS, CNT)) > 0 && BUF != NULL) {
         strcpy(BUF, "failure\n");
-    } else if (BUF != NULL) {
-        strcpy(BUF, "success\n");
+    } else {
+        if (BUF != NULL) {
+            strcpy(BUF, "success\n");
+        }
     }
     return (BUF!=NULL?strlen(BUF):status);
 }
@@ -458,6 +509,9 @@ static int actual_colors_commit_all(char *buffer, const struct kernel_param *kp,
      .a2 = ELUK_WMI_LED_ZONE_LEFT,     .a3 = eluk_led_wmi_get_left_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 },
     };
+    if(!eluk_logo_committed) eluk_logo_committed = true;
+    if(!eluk_trunk_committed) eluk_trunk_committed = true;
+    if(!eluk_kbd_committed) eluk_kbd_committed = true;
     return apply_settings(settings, 5, buffer, doCommit); // returns
 }
 #endif
@@ -529,6 +583,7 @@ static int actual_colors_commit_kbd(char *buffer, const struct kernel_param *kp,
      .a2 = ELUK_WMI_LED_ZONE_LEFT,     .a3 = eluk_led_wmi_get_left_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 },
     };
+    if(!eluk_kbd_committed) eluk_kbd_committed = true;
     return apply_settings(settings, 3, buffer, doCommit); // returns
 }
 
@@ -540,6 +595,7 @@ static int actual_colors_commit_trunk(char *buffer, const struct kernel_param *k
      .a2 = ELUK_WMI_LED_ZONE_TRUNK,    .a3 = eluk_led_wmi_get_trunk_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 }
     };
+    if(!eluk_trunk_committed) eluk_trunk_committed = true;
     return apply_settings(settings, 1, buffer, doCommit); // returns
 }
 
@@ -551,7 +607,19 @@ static int actual_colors_commit_logo(char *buffer, const struct kernel_param *kp
      .a2 = ELUK_WMI_LED_ZONE_LOGO,     .a3 = eluk_led_wmi_get_logo_a3(),
      .a4 = 0x0, .a5 = 0x0, .a6 = 0x0,  .rev0 = 0x0, .rev1 = 0x0 }
     };
+    if(!eluk_logo_committed) eluk_logo_committed = true;
     return apply_settings(settings, 1, buffer, doCommit); // returns
+}
+
+static int kprint_or_just_ret(char* buffer, const char* message, int retcode) {
+    int sprintf_char = -1;
+    if(buffer != NULL)
+    {
+        sprintf_char = sprintf(buffer, "%s\n", message);
+        return sprintf_char;
+    }
+    pr_err(KERN_ERR "%s: %s", KBUILD_MODNAME, message);
+    return retcode;
 }
 
 static int check_trunk_colors(char* buffer)
@@ -560,39 +628,15 @@ static int check_trunk_colors(char* buffer)
     {
         case(ELUK_ERR_CHECK_EFFECT):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Trunk was set to an unsupported effect.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_EFFECT;
-            }
+            return kprint_or_just_ret(buffer,"Trunk was set to an unsupported effect.", E_EFFECT);
         }
         case(ELUK_ERR_CHECK_LEVEL):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Trunk was set to an unsupported level.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_LEVEL;
-            }
+            return kprint_or_just_ret(buffer,"Trunk was set to an unsupported level.", E_LEVEL);
         }
         case(ELUK_ERR_CHECK_COLOR):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Trunk was set to an unsupported color.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_COLOR; // create E_COLOR
-            }
+            return kprint_or_just_ret(buffer,"Trunk was set to an unsupported color.", E_COLOR);
         }
         default: {}
     }
@@ -605,39 +649,15 @@ static int check_logo_colors(char* buffer)
     {
         case(ELUK_ERR_CHECK_EFFECT):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Logo was set to an unsupported effect.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_EFFECT;
-            }
+            return kprint_or_just_ret(buffer,"Logo was set to an unsupported effect.", E_EFFECT);
         }
         case(ELUK_ERR_CHECK_LEVEL):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Logo was set to an unsupported level.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_LEVEL;
-            }
+            return kprint_or_just_ret(buffer,"Logo was set to an unsupported level.", E_LEVEL);
         }
         case(ELUK_ERR_CHECK_COLOR):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Logo was set to an unsupported color.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_COLOR; // create E_COLOR
-            }
+            return kprint_or_just_ret(buffer,"Logo was set to an unsupported color.", E_COLOR);
         }
         default: {}
     }
@@ -650,39 +670,15 @@ static int check_kbd_colors(char* buffer)
     {
         case(ELUK_ERR_CHECK_EFFECT):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Left side was set to an unsupported effect.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_EFFECT;
-            }
+            return kprint_or_just_ret(buffer,"Left side was set to an unsupported effect.", E_EFFECT);
         }
         case(ELUK_ERR_CHECK_LEVEL):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Left side was set to an unsupported level.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_LEVEL;
-            }
+            return kprint_or_just_ret(buffer,"Left side was set to an unsupported level.", E_LEVEL);
         }
         case(ELUK_ERR_CHECK_COLOR):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Left side was set to an unsupported color.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_COLOR; // create E_COLOR
-            }
+            return kprint_or_just_ret(buffer,"Left side was set to an unsupported color.", E_COLOR);
         }
         default: {}
     }
@@ -690,39 +686,15 @@ static int check_kbd_colors(char* buffer)
     {
         case(ELUK_ERR_CHECK_EFFECT):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Centre was set to an unsupported effect.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_EFFECT;
-            }
+            return kprint_or_just_ret(buffer,"Centre was set to an unsupported effect.", E_EFFECT);
         }
         case(ELUK_ERR_CHECK_LEVEL):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Centre was set to an unsupported level.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_LEVEL;
-            }
+            return kprint_or_just_ret(buffer,"Centre was set to an unsupported level.", E_LEVEL);
         }
         case(ELUK_ERR_CHECK_COLOR):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Centre was set to an unsupported color.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_COLOR; // create E_COLOR
-            }
+            return kprint_or_just_ret(buffer,"Centre was set to an unsupported color.", E_COLOR);
         }
         default: {}
     }
@@ -730,39 +702,15 @@ static int check_kbd_colors(char* buffer)
     {
         case(ELUK_ERR_CHECK_EFFECT):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Right side was set to an unsupported effect.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_EFFECT;
-            }
+            return kprint_or_just_ret(buffer,"Right side was set to an unsupported effect.", E_EFFECT);
         }
         case(ELUK_ERR_CHECK_LEVEL):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Right side was set to an unsupported level.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_LEVEL;
-            }
+            return kprint_or_just_ret(buffer,"Right side was set to an unsupported level.", E_LEVEL);
         }
         case(ELUK_ERR_CHECK_COLOR):
         {
-            if(buffer != NULL) 
-            {
-                strcpy(buffer, "Right side was set to an unsupported color.\n");
-                return strlen(buffer);
-            }
-            else
-            {
-                return E_COLOR; // create E_COLOR
-            }
+            return kprint_or_just_ret(buffer,"Right side was set to an unsupported color.", E_COLOR);
         }
         default: {}
     }
@@ -858,11 +806,7 @@ static int eluk_led_wmi_colors_pretend_commit_logo(char *buffer, const struct ke
 
 module_wmi_driver(eluk_led_wmi_driver);
 
-MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
-MODULE_DESCRIPTION("LED functions for the Eluktronics Prometheus XVI WMI interface");
-MODULE_VERSION("1.0.10");
-MODULE_LICENSE("GPL");
-MODULE_SOFTDEP("pre: eluk-pxvi-shared-wmi");
+MODULE_SPEC("LED functions for the Eluktronics Prometheus XVI WMI interface","pre: eluk-pxvi-shared-wmi");
 
 // Readonly perm macros
 #define PERM_W_ADMIN  (S_IWUSR | S_IWGRP)
@@ -870,6 +814,14 @@ MODULE_SOFTDEP("pre: eluk-pxvi-shared-wmi");
 #define PERM_RW_ADMIN (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP)
 
 // section: preset ops
+
+static const struct kernel_param_ops eluk_kbd_last_known_state = {
+        .get    = eluk_led_wmi_last_known_state,
+        .set    = NULL,
+};
+module_param_cb(rgb_last_known_state, &eluk_kbd_last_known_state, NULL, PERM_RO_ALL);
+MODULE_PARM_DESC(rgb_last_known_state, "Get last known state.");
+
 #if defined(ELUK_ENABLE_PRESETS)
 static const struct kernel_param_ops eluk_kbd_preset_offline_ops = {
     .get    = eluk_led_wmi_offline,
@@ -1007,16 +959,6 @@ static const struct kernel_param_ops eluk_commit_logo_ops = {
 };
 module_param_cb(rgb_commit_logo, &eluk_commit_logo_ops, NULL, PERM_RO_ALL);
 MODULE_PARM_DESC(rgb_commit_logo, "Commit logo colors and mode setup to WMI.");
-
-
-/*
-static const struct kernel_param_ops eluk_pretend_commit_all_ops = {
-    .get    = eluk_led_wmi_colors_pretend_commit_all,
-    .set    = NULL,
-};
-module_param_cb(rgb_pretend_commit_all, &eluk_pretend_commit_all_ops, NULL, PERM_RO_ALL);
-MODULE_PARM_DESC(rgb_pretend_commit_all, "Commit all colors and mode setup to WMI.");
-*/
 
 #if defined(ELUK_TESTING)
 static const struct kernel_param_ops eluk_pretend_commit_kbd_ops = {

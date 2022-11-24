@@ -74,5 +74,12 @@ int eluk_shared_wmi_set_value(void *bytes, int size);
 eluk_shared_evt_cb_int_t eluk_shared_evt_cb_int;
 eluk_shared_evt_cb_buf_t eluk_shared_evt_cb_buf;
 
+#define MODULE_VER "1.0.13"
+#define MODULE_SPEC(DESC, SOFTDEP) \
+    MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>"); \
+    MODULE_DESCRIPTION(DESC); \
+    MODULE_VERSION(MODULE_VER); \
+    MODULE_LICENSE("GPL");\
+    MODULE_SOFTDEP(SOFTDEP);
 
 #endif

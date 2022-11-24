@@ -284,11 +284,7 @@ module_param_cb(order_513, &eluk_shared_order_513, NULL, S_IRUSR);
 MODULE_PARM_DESC(order_513, "Order 513. Never use.");
 #endif
 
-MODULE_AUTHOR("Renaud Lepage <root@cybikbase.com>");
-MODULE_DESCRIPTION("Driver for the Eluktronics Prometheus XVI WMI interface");
-MODULE_VERSION("1.0.10");
-MODULE_LICENSE("GPL");
-MODULE_SOFTDEP("post: eluk-pxvi-led-wmi");
+MODULE_SPEC("Driver for the Eluktronics Prometheus XVI WMI interface", "post: eluk-pxvi-led-wmi");
 
 MODULE_DEVICE_TABLE(wmi, eluk_shared_wmi_device_ids);
 MODULE_ALIAS_ELUK_SHARED_WMI();

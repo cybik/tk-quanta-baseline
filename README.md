@@ -1,6 +1,6 @@
 # Table of Contents
 
-- [Notice](#notice)
+- [Notice of Deviation from Original Work](#notice-of-deviation)
   - [Hey this looks legit](#legit)
   - [What are you doing here?](#nani)
   - [Why tho](#doushite)
@@ -11,9 +11,14 @@
 - <a href="#kernelparam">Kernel Parameter</a>
 - <a href="#modes">Modes</a>
 
-# IMPORTANT - Forked Repository Notice <a name="notice"></a>
-This forked repository is highly experimental, highly verbose, and should not be considered
-official in any capacity.
+# Notice of Deviation from Original Work <a name="notice-of-deviation"></a>
+This notice is written in order to preserve the ***spirit*** of Open Source development, to make you aware that this repository's contents derive from the [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard) repository.
+
+This repository's contents being irrelevant to and fundamentally detached from upstream, have been cleaned up (of sorts) and are now logically "separate" for maintenance and code management purposes (unused source and header files have been removed, Makefiles renamed, etc.).
+
+However, cloning this repository will give you the full history of development, so that you can see the full modification history; this preserves access to the original code, as well as original deviations leading to the altered source tree.
+
+This repository's maintainers wish to thank [TUXEDO Computers](https://www.tuxedocomputers.com/) for the original codebase on top of which this module set was constructed.
 
 ## Hey this looks legit <a name="legit"></a>
 
